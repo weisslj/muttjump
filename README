@@ -15,3 +15,6 @@ mails, it is only possible using the original mail. This (very simple)
 script helps to jump to this message, using e.g. this macro in .muttrc:
 
 macro generic ,j "<enter-command>push <pipe-message>muttjump<enter><enter>" "jump to original message"
+
+Don't forget to quit the new mutt instance (started by muttjump) after
+the modifications.
