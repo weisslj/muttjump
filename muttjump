@@ -1,0 +1,100 @@
+#!/bin/bash
+# written by Johannes Weißl
+
+# muttjump
+#
+# This script makes mail indexers (like mairix, mu or nmzmail) together with
+# mutt more useful.
+#
+# These search engines usually create a virtual maildir containing symbolic
+# links to the original mails, which can be browsed using mutt.
+# It would be optimal if mutt somehow knew that the two maildir entries
+# identify the same mail, but this is not that easy (mail folder
+# abstraction from different formats, no tight integration of mail indexers).
+#
+# So if one wants to rename (for setting/clearing flags), delete or edit the
+# mails, it is only possible using the original mail. This (very simple)
+# script helps to jump to this message, using e.g. this macro in .muttrc:
+#
+# macro generic ,j "<enter-command>push <pipe-message>muttjump<enter><enter>" "jump to original message"
+
+# one of: mairix, mu, mu-old (mu < 0.7) and nmzmail
+MUTTJUMP_INDEXER=${MUTTJUMP_INDEXER:-}
+
+# program paths
+MUTT=${MUTT:-mutt}
+MAIRIX=${MAIRIX:-mairix}
+MU=${MU:-mu}
+NMZMAIL=${NMZMAIL:-nmzmail}
+
+function die () {
+    echo -e >&2 "$0: $1"
+    exit 1
+}
+
+# Check command-line arguments and STDIN
+if tty -s || [ $# -ne 0 ] ; then
+    cat >&2 <<END
+Usage: $0 < msg
+
+This script calls mutt, jumping to the message given in stdin.
+Uses a mail search engine (currently mairix, mu and nmzmail are supported),
+which has to be configured through MUTTJUMP_INDEXER variable.
+END
+    exit 1
+fi
+
+# check if mutt is installed
+if ! type -p $MUTT >/dev/null ; then
+    die "$MUTT is not in PATH, set MUTT variable"
+fi
+
+# search for Message-ID in STDIN
+msgid=$(sed -n 's/^Message-ID: \(.*\)/\1/p' | head -n1)
+if [ -z "$msgid" ] ; then
+    die "could not find Message-ID header in standard input"
+fi
+msgid_clean=$(echo "$msgid" | sed 's/^<\(.*\)>$/\1/')
+
+# try to locate path of message using a mail search engine
+case $MUTTJUMP_INDEXER in
+    mairix)
+        orig_msgfile=$($MAIRIX -r "m:$msgid_clean" | head -n1)
+        ;;
+    mu)
+        orig_msgfile=$($MU find -f l "i:$msgid_clean" |
+            grep -v "^\*\*" | head -n1)
+        ;;
+    mu-old)
+        orig_msgfile=$($MU find -f p "m:$msgid_clean" | head -n1)
+        ;;
+    nmzmail)
+        nmzmail_results=$(mktemp -d)
+        echo "+message-id:$msgid" | $NMZMAIL -n 1 -r "$nmzmail_results"
+        msgfile=$(find "$nmzmail_results" -type l | head -n1)
+        orig_msgfile=$(readlink "$msgfile")
+        rm -rf "$nmzmail_results"
+        ;;
+    "")
+        die "variable MUTTJUMP_INDEXER not set or empty"
+        ;;
+    *)
+        die "unknown mail index program \"$MUTTJUMP_INDEXER\""
+        ;;
+esac
+
+if [ -z "$orig_msgfile" -o ! -e "$orig_msgfile" ] ; then
+    die "no message with msgid $msgid found!"
+fi
+
+orig_maildir=$(dirname $(dirname "$orig_msgfile"))
+
+# Close message-stdin and open terminal-stdin instead.
+# mutt behaves different if STDIN is no terminal
+# TODO: Find cleaner solution (e.g. mutt command-line argument?)
+exec 0<&-
+term="/dev/$(ps -p$$ --no-heading | awk '{print $2}')"
+exec < $term
+
+# start mutt, open original folder and jump to the original message
+$MUTT -e "push <change-folder>$orig_maildir<enter><search>\"~i $msgid\"<enter>"

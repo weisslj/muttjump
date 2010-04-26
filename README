@@ -1,0 +1,17 @@
+muttjump
+written by Johannes Weißl
+
+This script makes mail indexers (like mairix, mu or nmzmail) together with
+mutt more useful.
+
+These search engines usually create a virtual maildir containing symbolic
+links to the original mails, which can be browsed using mutt.
+It would be optimal if mutt somehow knew that the two maildir entries
+identify the same mail, but this is not that easy (mail folder
+abstraction from different formats, no tight integration of mail indexers).
+
+So if one wants to rename (for setting/clearing flags), delete or edit the
+mails, it is only possible using the original mail. This (very simple)
+script helps to jump to this message, using e.g. this macro in .muttrc:
+
+macro generic ,j "<enter-command>push <pipe-message>muttjump<enter><enter>" "jump to original message"
