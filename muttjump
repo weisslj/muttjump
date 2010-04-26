@@ -50,7 +50,7 @@ if ! type -p $MUTT >/dev/null ; then
 fi
 
 # search for Message-ID in STDIN
-msgid=$(sed -n 's/^Message-ID: \(.*\)/\1/p' | head -n1)
+msgid=$(sed -n 's/^Message-ID: \(.*\)/\1/Ip' | head -n1)
 if [ -z "$msgid" ] ; then
     die "could not find Message-ID header in standard input"
 fi
@@ -87,7 +87,11 @@ if [ -z "$orig_msgfile" -o ! -e "$orig_msgfile" ] ; then
     die "no message with msgid $msgid found!"
 fi
 
+# get containing maildir of $orig_msgfile
 orig_maildir=$(dirname $(dirname "$orig_msgfile"))
+if [ ! -d "$orig_maildir/cur" ] ; then
+    die "directory \"$orig_maildir\" doesn't exist or is no Maildir"
+fi
 
 # Close message-stdin and open terminal-stdin instead.
 # mutt behaves different if STDIN is no terminal
