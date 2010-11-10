@@ -73,9 +73,9 @@ fi
 
 # search for Message-ID in STDIN
 if type -p $FORMAIL >/dev/null ; then
-    msgid=$(formail -c -z -x Message-ID | head -n1)
+    msgid=$($FORMAIL -c -z -x Message-ID | head -n1)
 elif type -p $REFORMAIL >/dev/null ; then
-    msgid=$(reformail -c -x Message-ID: | head -n1)
+    msgid=$($REFORMAIL -c -x Message-ID: | head -n1)
 else
     msgid=$(sed -n 's/^Message-ID: \(.*\)/\1/Ip' | head -n1)
 fi
