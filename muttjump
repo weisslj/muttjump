@@ -47,6 +47,7 @@ MU=${MU:-mu}
 NMZMAIL=${NMZMAIL:-nmzmail}
 SCREEN=${SCREEN:-screen}
 FORMAIL=${FORMAIL:-formail}
+REFORMAIL=${REFORMAIL:-reformail}
 
 function die () {
     echo -e >&2 "$0: $1"
@@ -73,6 +74,8 @@ fi
 # search for Message-ID in STDIN
 if type -p $FORMAIL >/dev/null ; then
     msgid=$(formail -c -z -x Message-ID | head -n1)
+elif type -p $REFORMAIL >/dev/null ; then
+    msgid=$(reformail -c -x Message-ID: | head -n1)
 else
     msgid=$(sed -n 's/^Message-ID: \(.*\)/\1/Ip' | head -n1)
 fi
