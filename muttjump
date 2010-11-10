@@ -71,6 +71,14 @@ if ! type -p $MUTT >/dev/null ; then
     die "$MUTT is not in PATH, set MUTT variable"
 fi
 
+case $MUTTJUMP_MODE in
+    limit|search)
+        ;;
+    *)
+        die "variable MUTTJUMP_MODE must be set to \"limit\" or \"search\""
+        ;;
+esac
+
 # search for Message-ID in STDIN
 if type -p $FORMAIL >/dev/null ; then
     msgid=$($FORMAIL -c -z -x Message-ID | head -n1)
