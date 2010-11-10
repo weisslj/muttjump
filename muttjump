@@ -46,6 +46,7 @@ MAIRIX=${MAIRIX:-mairix}
 MU=${MU:-mu}
 NMZMAIL=${NMZMAIL:-nmzmail}
 SCREEN=${SCREEN:-screen}
+FORMAIL=${FORMAIL:-formail}
 
 function die () {
     echo -e >&2 "$0: $1"
@@ -70,7 +71,11 @@ if ! type -p $MUTT >/dev/null ; then
 fi
 
 # search for Message-ID in STDIN
-msgid=$(sed -n 's/^Message-ID: \(.*\)/\1/Ip' | head -n1)
+if type -p $FORMAIL >/dev/null ; then
+    msgid=$(formail -c -z -x Message-ID | head -n1)
+else
+    msgid=$(sed -n 's/^Message-ID: \(.*\)/\1/Ip' | head -n1)
+fi
 if [ -z "$msgid" ] ; then
     die "could not find Message-ID header in standard input"
 fi
