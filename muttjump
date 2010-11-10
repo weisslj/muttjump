@@ -130,7 +130,7 @@ fi
 # get containing maildir of $orig_msgfile
 orig_maildir=$(dirname $(dirname "$orig_msgfile"))
 if [ ! -d "$orig_maildir/cur" ] ; then
-    die "directory $(quote $orig_maildir) doesn't exist or is no Maildir"
+    die "directory $(quote "$orig_maildir") doesn't exist or is no Maildir"
 fi
 
 jump_cmd="<change-folder>$orig_maildir<enter><$MUTTJUMP_MODE>~i '$msgid'<enter>"
