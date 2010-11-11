@@ -145,7 +145,7 @@ if [ "$MUTTJUMP_USE_SCREEN" = no ] ; then
     exec < $term
 
     # start mutt, open original folder and jump to the original message
-    $MUTT -e "push \"<change-folder>$orig_maildir<enter>$jump_cmd\""
+    $MUTT -f "$orig_maildir" -e "push \"$jump_cmd\""
 
 else
 
