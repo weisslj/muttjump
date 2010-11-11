@@ -133,7 +133,7 @@ if [ ! -d "$orig_maildir/cur" ] ; then
     die "directory $(quote "$orig_maildir") doesn't exist or is no Maildir"
 fi
 
-jump_cmd="<change-folder>$orig_maildir<enter><$MUTTJUMP_MODE>~i '$msgid'<enter>"
+jump_cmd="<$MUTTJUMP_MODE>~i '$msgid'<enter>"
 
 if [ "$MUTTJUMP_USE_SCREEN" = no ] ; then
 
@@ -145,7 +145,7 @@ if [ "$MUTTJUMP_USE_SCREEN" = no ] ; then
     exec < $term
 
     # start mutt, open original folder and jump to the original message
-    $MUTT -e "push \"$jump_cmd\""
+    $MUTT -e "push \"<change-folder>$orig_maildir<enter>$jump_cmd\""
 
 else
 
@@ -156,8 +156,8 @@ else
         screen_opts_str="-S $(quote "$MUTTJUMP_SCREEN_SESSION")"
     fi
 
-    $SCREEN "${screen_opts[@]}" -X eval "select $(quote "$screen_window_name")" "stuff \":push \\\"$jump_cmd\\\"
-\""
+    $SCREEN "${screen_opts[@]}" -p "$screen_window_name" -X select .
+    $SCREEN "${screen_opts[@]}" -p "$screen_window_name" -X stuff ":push \"$jump_cmd\""
     if [ $? != 0 ] ; then
         die "You have to manually start a screen session with:
 $SCREEN $screen_opts_str -t $(quote "$screen_window_name") $MUTT -f $(quote "$orig_maildir")"
