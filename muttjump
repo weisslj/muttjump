@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # written by Johannes Weißl
 
 # muttjump
@@ -167,7 +167,7 @@ else
         screen_opts_str="-S $(quote "$MUTTJUMP_SCREEN_SESSION")"
     fi
 
-    $SCREEN "${screen_opts[@]}" -p "$screen_window_name" -X eval "select ." "stuff \"$jump_cmd\""
+    $SCREEN "${screen_opts[@]}" -p "$screen_window_name" -X eval "select '$screen_window_name'" "stuff \"$jump_cmd\""
 
     if [ $? != 0 ] ; then
         die "You have to manually start a screen session with:
