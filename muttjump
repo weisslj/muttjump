@@ -128,7 +128,7 @@ if [ -z "$orig_msgfile" -o ! -e "$orig_msgfile" ] ; then
 fi
 
 # get containing maildir of $orig_msgfile
-orig_maildir=$(dirname $(dirname "$orig_msgfile"))
+orig_maildir=$(dirname "$(dirname "$orig_msgfile")")
 if [ ! -d "$orig_maildir/cur" ] ; then
     die "directory $(quote "$orig_maildir") doesn't exist or is no Maildir"
 fi
