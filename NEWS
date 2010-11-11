@@ -1,0 +1,19 @@
+muttjump (1.2)
+
+  * Add mode setting, can be "search" or "limit", e.g.:
+      export MUTTJUMP_MODE=limit
+  * Add screen mode (idea by Jostein <http://github.com/jostber>)
+    To use it, set the following variables:
+      export MUTTJUMP_USE_SCREEN=yes
+      export MUTTJUMP_SCREEN_SESSION=foobar
+    Start mutt in a screen session (one for every folder):
+      screen -S foobar -t Sent mutt -f =Sent
+      screen -X -S foobar screen -t INBOX mutt -f =INBOX
+
+ -- Johannes Weißl <jargon@molb.org>  Thu Nov 11 12:44:48 2010 +0100
+
+muttjump (1.0)
+
+  * Initial release.
+
+ -- Johannes Weißl <jargon@molb.org>  Tue Apr 27 00:17:49 2010 +0200
