@@ -2,7 +2,7 @@ muttjump (1.2)
 
   * Add mode setting, can be "search" or "limit", e.g.:
       export MUTTJUMP_MODE=limit
-  * Add screen mode (idea by Jostein <http://github.com/jostber>)
+  * Add screen mode (idea by Jostein Berntsen <jbernts@broadpark.no>)
     To use it, set the following variables:
       export MUTTJUMP_USE_SCREEN=yes
       export MUTTJUMP_SCREEN_SESSION=foobar
