@@ -137,7 +137,10 @@ jump_expr="~i'$msgid'"
 
 if [ "$MUTTJUMP_USE_SCREEN" = no ] ; then
 
-    jump_cmd="<$MUTTJUMP_MODE>$jump_expr<enter>"
+    jump_cmd="<limit>$jump_expr<enter>"
+    if [ "$MUTTJUMP_MODE" = search ] ; then
+        jump_cmd="$jump_cmd<limit>all<enter>"
+    fi
 
     # Close message-stdin and open terminal-stdin instead.
     # mutt behaves different if STDIN is no terminal
@@ -151,14 +154,10 @@ if [ "$MUTTJUMP_USE_SCREEN" = no ] ; then
 
 else
 
-    case $MUTTJUMP_MODE in
-        limit)
-            jump_cmd="l$jump_expr"
-            ;;
-        search)
-            jump_cmd="/$jump_expr"
-            ;;
-    esac
+    jump_cmd="l$jump_expr"
+    if [ "$MUTTJUMP_MODE" = search ] ; then
+        jump_cmd="${jump_cmd}lall"
+    fi
 
     screen_window_name=$(MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE "$orig_maildir")
     declare -a screen_opts
@@ -167,7 +166,7 @@ else
         screen_opts_str="-S $(quote "$MUTTJUMP_SCREEN_SESSION")"
     fi
 
-    $SCREEN "${screen_opts[@]}" -p "$screen_window_name" -X eval "select '$screen_window_name'" "stuff \"$jump_cmd\""
+    $SCREEN "${screen_opts[@]}" -p "$screen_window_name" -X eval "select '$screen_window_name'" "stuff \"$jump_cmd\""
 
     if [ $? != 0 ] ; then
         die "You have to manually start a screen session with:
