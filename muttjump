@@ -143,7 +143,7 @@ if [ "$MUTTJUMP_USE_SCREEN" = no ] ; then
     # mutt behaves different if STDIN is no terminal
     # TODO: Find cleaner solution (e.g. mutt command-line argument?)
     exec 0<&-
-    term="/dev/$(ps -p$$ | awk 'END { print $2 }')"
+    term="/dev/$(ps -p$$ -otty=)"
     exec < $term
 
     # start mutt, open original folder and jump to the original message
