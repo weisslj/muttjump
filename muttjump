@@ -59,8 +59,7 @@ function quote () {
 }
 
 function is_callable () {
-    read cmd args <<<$1
-    type -p $cmd >/dev/null
+    type -p $1 >/dev/null
 }
 
 # Check command-line arguments and STDIN
