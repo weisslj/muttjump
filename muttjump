@@ -40,7 +40,7 @@ MUTTJUMP_MULTI_SCREEN_MODE=${MUTTJUMP_MULTI_SCREEN_MODE:-no}
 MUTTJUMP_SCREEN_SESSION=${MUTTJUMP_SCREEN_SESSION:-}
 
 # function to create the screen window name from the full path of the mailbox
-if ! type -p MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE >/dev/null ; then
+if ! type MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE >/dev/null 2>&1 ; then
     function MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE () {
         basename "$1"
     }
@@ -65,7 +65,7 @@ function quote () {
 }
 
 function is_callable () {
-    type -p $1 >/dev/null
+    type $1 >/dev/null 2>&1
 }
 
 # Check command-line arguments and STDIN
