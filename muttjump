@@ -24,6 +24,10 @@ MUTTJUMP_INDEXER=${MUTTJUMP_INDEXER:-}
 # "limit" or "search" (default)
 MUTTJUMP_MODE=${MUTTJUMP_MODE:-search}
 
+# "yes", "no" or "auto"
+# If set to "auto", the $STY environment variable is used for auto detection.
+MUTTJUMP_USE_SCREEN="auto"
+
 # "yes" or "no"
 # If this is set to "yes", muttjump will not open a new instance of
 # mutt, but instead jump to the original message in a running mutt
@@ -148,15 +152,27 @@ if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = no ] ; then
         jump_cmd="$jump_cmd<limit>all<enter>"
     fi
 
-    # Close message-stdin and open terminal-stdin instead.
-    # mutt behaves different if STDIN is no terminal
-    # TODO: Find cleaner solution (e.g. mutt command-line argument?)
-    exec 0<&-
-    term="/dev/$(ps -p$$ -otty=)"
-    exec < $term
+    if [ "$MUTTJUMP_USE_SCREEN" = auto -a -n "$STY" ] ; then
+        MUTTJUMP_USE_SCREEN=yes
+    fi
+
+    screen_opts=()
+    if [ "$MUTTJUMP_USE_SCREEN" = yes ] ; then
+        [ -n "$STY" ] && screen_opts=("-X" "screen")
+        screen_window_name=$(MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE "$orig_maildir")
+        screen_opts=("${screen_opts[@]}" "-t" "$screen_window_name")
+    else
+        SCREEN=""
+        # Close message-stdin and open terminal-stdin instead.
+        # mutt behaves different if STDIN is no terminal
+        # TODO: Find cleaner solution (e.g. mutt command-line argument?)
+        exec 0<&-
+        term="/dev/$(ps -p$$ -otty=)"
+        exec < $term
+    fi
 
     # start mutt, open original folder and jump to the original message
-    $MUTT -f "$orig_maildir" -e "push \"$jump_cmd\""
+    $SCREEN "${screen_opts[@]}" $MUTT -f "$orig_maildir" -e "push \"$jump_cmd\""
 
 else
 
