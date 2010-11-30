@@ -17,4 +17,5 @@ script helps to jump to this message, using e.g. this macro in .muttrc:
 macro generic ,j "<enter-command>push <pipe-message>muttjump<enter><enter>" "jump to original message"
 
 Don't forget to quit the new mutt instance (started by muttjump) after
-the modifications.
+the modifications. To make jumping faster (no keypress required), unset
+$wait_key in your ~/.muttrc.
