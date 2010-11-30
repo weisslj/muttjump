@@ -58,6 +58,11 @@ function quote () {
     echo \'${1//\'/\'\\\'\'}\'
 }
 
+function is_callable () {
+    read cmd args <<<$1
+    type -p $cmd >/dev/null
+}
+
 # Check command-line arguments and STDIN
 if tty -s || [ $# -ne 0 ] ; then
     cat >&2 <<END
@@ -71,7 +76,7 @@ END
 fi
 
 # check if mutt is installed
-if ! type -p $MUTT >/dev/null ; then
+if ! is_callable $MUTT ; then
     die "$MUTT is not in PATH, set MUTT variable"
 fi
 
@@ -84,9 +89,9 @@ case $MUTTJUMP_MODE in
 esac
 
 # search for Message-ID in STDIN
-if type -p $FORMAIL >/dev/null ; then
+if is_callable $FORMAIL ; then
     msgid=$($FORMAIL -c -z -x Message-ID | head -n1)
-elif type -p $REFORMAIL >/dev/null ; then
+elif is_callable $REFORMAIL ; then
     msgid=$($REFORMAIL -c -x Message-ID: | head -n1)
 else
     msgid=$(sed -n 's/^Message-ID:[ \t]*\(.*\)/\1/Ip' | head -n1)
