@@ -28,7 +28,9 @@ MUTTJUMP_MODE=${MUTTJUMP_MODE:-search}
 # If this is set to "yes", muttjump will not open a new instance of
 # mutt, but instead jump to the original message in a running mutt
 # (which is running in a screen session).
-MUTTJUMP_USE_SCREEN=${MUTTJUMP_USE_SCREEN:-no}
+# ATTENTION: You need to have one mutt instance open for every mailbox
+#            for this to work!
+MUTTJUMP_MULTI_SCREEN_MODE=${MUTTJUMP_MULTI_SCREEN_MODE:-no}
 
 # name of the screen session (screen -S ...), leave blank for none
 MUTTJUMP_SCREEN_SESSION=${MUTTJUMP_SCREEN_SESSION:-}
@@ -139,7 +141,7 @@ fi
 
 jump_expr="~i'$msgid'"
 
-if [ "$MUTTJUMP_USE_SCREEN" = no ] ; then
+if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = no ] ; then
 
     jump_cmd="<limit>$jump_expr<enter>"
     if [ "$MUTTJUMP_MODE" = search ] ; then
