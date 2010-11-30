@@ -26,7 +26,7 @@ MUTTJUMP_MODE=${MUTTJUMP_MODE:-search}
 
 # "yes", "no" or "auto"
 # If set to "auto", the $STY environment variable is used for auto detection.
-MUTTJUMP_USE_SCREEN="auto"
+MUTTJUMP_USE_SCREEN=${MUTTJUMP_USE_SCREEN:-auto}
 
 # "yes" or "no"
 # If this is set to "yes", muttjump will not open a new instance of
