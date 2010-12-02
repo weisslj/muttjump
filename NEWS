@@ -1,3 +1,18 @@
+muttjump (1.3)
+
+  * Bugfixes and compatibility with Max OS X
+  * Use dialog (whiptail) to choose between mailboxes if more that one message
+    was found
+  * Ability to specify Message-ID on command-line
+  * Ability to jump to parent message (In-Reply-To) with "-R" option
+  * Rename MUTTJUMP_USE_SCREEN to MUTTJUMP_MULTI_SCREEN_MODE
+  * MUTTJUMP_USE_SCREEN can now be "yes", "no" or "auto" (default)
+      yes:  always open a new screen window
+      no:   never use screen at all
+      auto: open new screen window when inside screen ($STY variable set)
+
+ -- Johannes Weißl <jargon@molb.org>  Thu Dec 2 12:26:15 2010 +0100
+
 muttjump (1.2)
 
   * Add mode setting, can be "search" or "limit", e.g.:
