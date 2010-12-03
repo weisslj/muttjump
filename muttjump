@@ -80,6 +80,15 @@ END
     exit 1
 }
 
+function reopen_tty () {
+    # Close message-stdin and open terminal-stdin instead.
+    # mutt behaves different if STDIN is no terminal
+    # TODO: Find cleaner solution (e.g. mutt command-line argument?)
+    exec 0<&-
+    term="/dev/$(ps -p$$ -otty=)"
+    exec < $term
+}
+
 
 # Check command-line arguments and STDIN
 search_header="Message-ID"
@@ -191,17 +200,16 @@ if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = no ] ; then
 
     screen_opts=()
     if [ "$MUTTJUMP_USE_SCREEN" = yes ] ; then
-        [ -n "$STY" ] && screen_opts=("-X" "screen")
+        if [ -n "$STY" ] ; then
+            screen_opts=("-X" "screen")
+        else
+            reopen_tty
+        fi
         screen_window_name=$(MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE "$orig_maildir")
         screen_opts=("${screen_opts[@]}" "-t" "$screen_window_name")
     else
         SCREEN=""
-        # Close message-stdin and open terminal-stdin instead.
-        # mutt behaves different if STDIN is no terminal
-        # TODO: Find cleaner solution (e.g. mutt command-line argument?)
-        exec 0<&-
-        term="/dev/$(ps -p$$ -otty=)"
-        exec < $term
+        reopen_tty
     fi
 
     # start mutt, open original folder and jump to the original message
