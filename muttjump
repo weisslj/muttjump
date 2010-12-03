@@ -36,9 +36,6 @@ MUTTJUMP_USE_SCREEN=${MUTTJUMP_USE_SCREEN:-auto}
 #            for this to work!
 MUTTJUMP_MULTI_SCREEN_MODE=${MUTTJUMP_MULTI_SCREEN_MODE:-no}
 
-# name of the screen session (screen -S ...), leave blank for none
-MUTTJUMP_SCREEN_SESSION=${MUTTJUMP_SCREEN_SESSION:-}
-
 # function to create the screen window name from the full path of the mailbox
 if ! type MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE >/dev/null 2>&1 ; then
     function MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE () {
@@ -218,16 +215,6 @@ else
     fi
 
     screen_window_name=$(MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE "$orig_maildir")
-    screen_opts=()
-    if [ -n "$MUTTJUMP_SCREEN_SESSION" ] ; then
-        screen_opts=("-S" "$MUTTJUMP_SCREEN_SESSION")
-        screen_opts_str="-S $(quote "$MUTTJUMP_SCREEN_SESSION")"
-    fi
 
-    $SCREEN "${screen_opts[@]}" -p "$screen_window_name" -X eval "select '$screen_window_name'" "stuff \"$jump_cmd\""
-
-    if [ $? != 0 ] ; then
-        die "You have to manually start a screen session with:
-$SCREEN $screen_opts_str -t $(quote "$screen_window_name") $MUTT -f $(quote "$orig_maildir")"
-    fi
+    $SCREEN -p "$screen_window_name" -X eval "select '$screen_window_name'" "stuff \"$jump_cmd\""
 fi
