@@ -1,7 +1,7 @@
 muttjump (1.3)
 
   * Bugfixes and compatibility with Max OS X
-  * Use dialog (whiptail) to choose between mailboxes if more that one message
+  * Use dialog (whiptail) to choose between mailboxes if more than one message
     was found
   * Ability to specify Message-ID on command-line
   * Ability to jump to parent message (In-Reply-To) with "-R" option
