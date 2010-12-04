@@ -176,19 +176,18 @@ if [ $count -gt 1 -a -n "$DIALOG_PROG" ] ; then
         --menu "Select mailbox:" $((count+8)) $((maxwidth+16)) \
         $count $choices 3>&2 2>&1 1>&3-)
 elif [ $count -gt 1 ] ; then
-    dirs=()
-    for f in $orig_msgfiles ; do
-        dirs=(${dirs[@]} "$(dirname "$(dirname "$f")")")
-    done
+    choices=()
+    while read line ; do
+        choices=("${choices[@]}" "$(dirname "$(dirname "$line")")")
+    done <<<"$orig_msgfiles"
     echo "More than one mailbox found"
     echo "Select mailbox:"
-    select md in ${dirs[@]} ; do
-        orig_maildir="$md"
-        orig_msgfile="${orig_msgfiles[$REPLY]}"
+    select md in "${choices[@]}" ; do
+        orig_maildir=$md
         break
     done <> /dev/tty
 else
-    orig_msgfile="$orig_msgfiles"
+    orig_msgfile=$orig_msgfiles
     # get containing maildir of $orig_msgfile
     orig_maildir=$(dirname "$(dirname "$orig_msgfile")")
 fi
