@@ -63,6 +63,10 @@ function quote () {
     echo \'${1//\'/\'\\\'\'}\'
 }
 
+function quote_regexp () {
+    echo "$1" | sed 's/[][\^.$|)(*+?}{]/\\&/g'
+}
+
 function is_callable () {
     type $1 >/dev/null 2>&1
 }
@@ -158,7 +162,7 @@ case $MUTTJUMP_INDEXER in
         ;;
     nmzmail)
         nmzmail_results=$(mktemp -d)
-        echo "+message-id:$msgid" | $NMZMAIL -r "$nmzmail_results"
+        echo "+message-id:/^$msgid_quoted$/" | $NMZMAIL -r "$nmzmail_results"
         orig_msgfiles=$(find "$nmzmail_results" -type l -exec readlink {} \;)
         rm -rf "$nmzmail_results"
         ;;
