@@ -63,6 +63,10 @@ function quote () {
     echo \'${1//\'/\'\\\'\'}\'
 }
 
+function quote_regexp () {
+    echo "$1" | sed 's/[][\^.$|)(*+?}{]/\\&/g'
+}
+
 function is_callable () {
     type $1 >/dev/null 2>&1
 }
@@ -136,12 +140,19 @@ fi
 if [ -z "$msgid" ] ; then
     die "could not find $search_header header in standard input"
 fi
+msgid_quoted=$(quote_regexp "$msgid")
 msgid_clean=$(echo "$msgid" | sed -e 's/^<//' -e 's/>$//')
 
 # try to locate path of message using a mail search engine
 case $MUTTJUMP_INDEXER in
     mairix)
-        orig_msgfiles=$($MAIRIX -r "m:$msgid_clean")
+        # mairix can't quote special characters (~,/=^) in search words. As a
+        # workaround, split Message-ID in 31-character long AND-linked
+        # substrings.
+        msgid_mairix=$(echo "$msgid_clean" | sed -e 's/[~,/=^]/=,/g' \
+            -e 's/.\{31\}/&=,/g' -e 's/^\(=,\)\+//g' -e 's/$/=/' \
+            -e 's/\(=,\|=\)\+$/=/g')
+        orig_msgfiles=$($MAIRIX -r "m:$msgid_mairix")
         ;;
     mu)
         orig_msgfiles=$($MU find -f l "i:$msgid_clean" | grep -v "^\*\*")
@@ -151,7 +162,7 @@ case $MUTTJUMP_INDEXER in
         ;;
     nmzmail)
         nmzmail_results=$(mktemp -d)
-        echo "+message-id:$msgid" | $NMZMAIL -r "$nmzmail_results"
+        echo "+message-id:/^$msgid_quoted$/" | $NMZMAIL -r "$nmzmail_results"
         orig_msgfiles=$(find "$nmzmail_results" -type l -exec readlink {} \;)
         rm -rf "$nmzmail_results"
         ;;
@@ -196,7 +207,8 @@ if [ ! -d "$orig_maildir/cur" ] ; then
     die "directory $(quote "$orig_maildir") doesn't exist or is no Maildir"
 fi
 
-jump_expr="~i'$msgid'"
+msgid_mutt=$(quote_regexp "$msgid_quoted")
+jump_expr="~i'$msgid_mutt'"
 jump_cmd="<limit>$jump_expr<enter>"
 if [ "$MUTTJUMP_MODE" = search ] ; then
     jump_cmd="$jump_cmd<limit>all<enter>"
