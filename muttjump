@@ -170,7 +170,7 @@ fi
 count=$(echo "$orig_msgfiles" | wc -l)
 if [ $count -gt 1 -a -n "$DIALOG_PROG" ] ; then
     choices=$(echo "$orig_msgfiles" | while read line ;
-        do echo -e "$(dirname "$(dirname "$line")")\n." ; done)
+        do dirname "$(dirname "$line")" ; echo . ; done)
     maxwidth=$(echo "$choices" | wc -L)
     orig_maildir=$($DIALOG_PROG --clear --title "More than one mailbox found" \
         --menu "Select mailbox:" $((count+8)) $((maxwidth+16)) \
