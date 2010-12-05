@@ -71,6 +71,10 @@ function is_callable () {
     type $1 >/dev/null 2>&1
 }
 
+function wc_L () {
+    awk '{ y = length(); if (y > x) x = y } END { print x }'
+}
+
 function usage () {
     cat >&2 <<END
 Usage: muttjump msgid
@@ -182,7 +186,7 @@ count=$(echo "$orig_msgfiles" | wc -l)
 if [ $count -gt 1 -a -n "$DIALOG_PROG" ] ; then
     choices=$(echo "$orig_msgfiles" | while read line ;
         do dirname "$(dirname "$line")" ; echo . ; done)
-    maxwidth=$(echo "$choices" | wc -L)
+    maxwidth=$(echo "$choices" | wc_L)
     orig_maildir=$($DIALOG_PROG --clear --title "More than one mailbox found" \
         --menu "Select mailbox:" $((count+8)) $((maxwidth+16)) \
         $count $choices 3>&2 2>&1 1>&3-)
