@@ -207,7 +207,8 @@ if [ ! -d "$orig_maildir/cur" ] ; then
     die "directory $(quote "$orig_maildir") doesn't exist or is no Maildir"
 fi
 
-jump_expr="~i'$msgid'"
+msgid_mutt=$(quote_regexp "$msgid_quoted")
+jump_expr="~i'$msgid_mutt'"
 
 if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = no ] ; then
 
