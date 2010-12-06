@@ -43,6 +43,10 @@ if ! type MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE >/dev/null 2>&1 ; then
     }
 fi
 
+# Version of GNU screen
+# Since 4.01.00 (commit d87a0d8) backslash handling was altered.
+MUTTJUMP_SCREEN_VERSION=${MUTTJUMP_SCREEN_VERSION:-auto}
+
 # program paths
 MUTT=${MUTT:-mutt}
 MAIRIX=${MAIRIX:-mairix}
@@ -150,12 +154,15 @@ msgid_clean=$(echo "$msgid" | sed -e 's/^<//' -e 's/>$//')
 # try to locate path of message using a mail search engine
 case $MUTTJUMP_INDEXER in
     mairix)
+        msgid_mairix=$msgid_clean
         # mairix can't quote special characters (~,/=^) in search words. As a
         # workaround, split Message-ID in 31-character long AND-linked
         # substrings.
-        msgid_mairix=$(echo "$msgid_clean" | sed -e 's/[~,/=^]\+/ /g' \
-            -e 's/[^ ]\{31\}/& /g' -e 's/^ \+//g' -e 's/ *$/=/g' \
-            -e 's/ /=,/g')
+        if echo "$msgid_clean" | grep -q '[~,/=^]' ; then
+            msgid_mairix=$(echo "$msgid_clean" | sed -e 's/[~,/=^]\+/ /g' \
+                -e 's/[^ ]\{31\}/& /g' -e 's/^ \+//g' -e 's/ *$/=/g' \
+                -e 's/ /=,/g')
+        fi
         orig_msgfiles=$($MAIRIX -r "m:$msgid_mairix")
         ;;
     mu)
@@ -228,6 +235,13 @@ if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = no ] ; then
     if [ "$MUTTJUMP_USE_SCREEN" = yes ] ; then
         if [ -n "$STY" ] ; then
             screen_opts=("-X" "screen")
+            sv=$MUTTJUMP_SCREEN_VERSION
+            if [ "$sv" = auto ] ; then
+                sv=$($SCREEN --version | awk '{print $3}')
+            fi
+            if ! echo "$sv" | grep -q "^\(4\.00\|[0-3]\.\)" ; then
+                jump_cmd=${jump_cmd/\\/\\\\\\}
+            fi
         else
             reopen_tty
         fi
