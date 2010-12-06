@@ -238,11 +238,13 @@ if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = yes ] ||
 fi
 
 screen_opts=()
+screen_query_arg=""
 if [ "$MUTTJUMP_USE_SCREEN" = yes ] ; then
     if [ -n "$STY" ] ; then
         screen_opts=("-X" "screen")
         if is_new_screen ; then
             jump_cmd=${jump_cmd/\\/\\\\\\}
+            screen_query_arg="-Q"
         fi
     else
         reopen_tty
@@ -255,9 +257,8 @@ else
 fi
 
 if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = yes -a -n "$STY" ] ; then
-    if is_new_screen ; then
-        $SCREEN -X -p "$screen_window_name" -Q select "$screen_window_name" >/dev/null
-    fi
+    $SCREEN -X -p "$screen_window_name" $screen_query_arg \
+            select "$screen_window_name" >/dev/null
     if [ $? = 0 ] ; then
         $SCREEN -X -p "$screen_window_name" stuff ":push \"$jump_cmd\""
         exit 0
