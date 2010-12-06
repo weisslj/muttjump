@@ -78,6 +78,10 @@ function wc_L () {
     awk '{ y = length(); if (y > x) x = y } END { print x }'
 }
 
+# Check if screen is new enough to parse -X (commit 98b6b41) and support
+# -Q (commit 8147d08). It (falsely) assumes that screen version > 4.00
+# does this. Distributions that use git versions are likely to also keep
+# them up to date.
 function is_new_screen () {
     sv=$MUTTJUMP_SCREEN_VERSION
     if [ "$sv" = auto ] ; then
