@@ -154,7 +154,7 @@ case $MUTTJUMP_INDEXER in
         # workaround, split Message-ID in 31-character long AND-linked
         # substrings.
         msgid_mairix=$(echo "$msgid_clean" | sed -e 's/[~,/=^]\+/ /g' \
-            -e 's/[^ ]\{31\}/& /g' -e 's/^ \+//g' -e 's/ \+$/=/g' \
+            -e 's/[^ ]\{31\}/& /g' -e 's/^ \+//g' -e 's/ *$/=/g' \
             -e 's/ /=,/g')
         orig_msgfiles=$($MAIRIX -r "m:$msgid_mairix")
         ;;
