@@ -43,6 +43,10 @@ if ! type MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE >/dev/null 2>&1 ; then
     }
 fi
 
+# Version of GNU screen
+# Since 4.01.00 (commit d87a0d8) backslash handling was altered.
+MUTTJUMP_SCREEN_VERSION=${MUTTJUMP_SCREEN_VERSION:-auto}
+
 # program paths
 MUTT=${MUTT:-mutt}
 MAIRIX=${MAIRIX:-mairix}
@@ -232,6 +236,13 @@ if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = no ] ; then
     if [ "$MUTTJUMP_USE_SCREEN" = yes ] ; then
         if [ -n "$STY" ] ; then
             screen_opts=("-X" "screen")
+            sv=$MUTTJUMP_SCREEN_VERSION
+            if [ "$sv" = auto ] ; then
+                sv=$($SCREEN --version | awk '{print $3}')
+            fi
+            if ! echo "$sv" | grep -q "^\(4\.00\|[0-3]\.\)" ; then
+                jump_cmd=${jump_cmd/\\/\\\\\\}
+            fi
         else
             reopen_tty
         fi

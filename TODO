@@ -1,2 +1,0 @@
-- Jumping in mutt doesn't work with git-versions of screen if Message-ID
-  contains characters which must be escaped (screen -X screen ...)
