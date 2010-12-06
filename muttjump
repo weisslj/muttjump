@@ -79,6 +79,14 @@ function wc_L () {
     awk '{ y = length(); if (y > x) x = y } END { print x }'
 }
 
+function is_new_screen () {
+    sv=$MUTTJUMP_SCREEN_VERSION
+    if [ "$sv" = auto ] ; then
+        sv=$($SCREEN --version | awk '{print $3}')
+    fi
+    echo "$sv" | grep -vq "^\(4\.00\|[0-3]\.\)"
+}
+
 function usage () {
     cat >&2 <<END
 Usage: muttjump msgid
@@ -225,54 +233,37 @@ if [ "$MUTTJUMP_MODE" = search ] ; then
     jump_cmd="$jump_cmd<limit>all<enter>"
 fi
 
-if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = no ] ; then
+if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = yes ] ||
+        [ "$MUTTJUMP_USE_SCREEN" = auto -a -n "$STY" ] ; then
+    MUTTJUMP_USE_SCREEN=yes
+fi
 
-    if [ "$MUTTJUMP_USE_SCREEN" = auto -a -n "$STY" ] ; then
-        MUTTJUMP_USE_SCREEN=yes
-    fi
-
-    screen_opts=()
-    if [ "$MUTTJUMP_USE_SCREEN" = yes ] ; then
-        if [ -n "$STY" ] ; then
-            screen_opts=("-X" "screen")
-            sv=$MUTTJUMP_SCREEN_VERSION
-            if [ "$sv" = auto ] ; then
-                sv=$($SCREEN --version | awk '{print $3}')
-            fi
-            if ! echo "$sv" | grep -q "^\(4\.00\|[0-3]\.\)" ; then
-                jump_cmd=${jump_cmd/\\/\\\\\\}
-            fi
-        else
-            reopen_tty
+screen_opts=()
+if [ "$MUTTJUMP_USE_SCREEN" = yes ] ; then
+    if [ -n "$STY" ] ; then
+        screen_opts=("-X" "screen")
+        if is_new_screen ; then
+            jump_cmd=${jump_cmd/\\/\\\\\\}
         fi
-        screen_window_name=$(MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE "$orig_maildir")
-        screen_opts=("${screen_opts[@]}" "-t" "$screen_window_name")
     else
-        SCREEN=""
         reopen_tty
     fi
-
-    # start mutt, open original folder and jump to the original message
-    $SCREEN "${screen_opts[@]}" $MUTT -f "$orig_maildir" -e "push \"$jump_cmd\""
-
-else
-
-    jump_cmd_short="l$jump_expr"
-    if [ "$MUTTJUMP_MODE" = search ] ; then
-        jump_cmd_short="${jump_cmd_short}lall"
-    fi
-
     screen_window_name=$(MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE "$orig_maildir")
+    screen_opts=("${screen_opts[@]}" "-t" "$screen_window_name")
+else
+    SCREEN=""
+    reopen_tty
+fi
 
-    if [ -z "$STY" ] ; then
-        reopen_tty
-        $SCREEN -t "$screen_window_name" $MUTT -f "$orig_maildir" -e "push \"$jump_cmd\""
-    else
+if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = yes -a -n "$STY" ] ; then
+    if is_new_screen ; then
         $SCREEN -X -p "$screen_window_name" -Q select "$screen_window_name" >/dev/null
-        if [ $? != 0 ] ; then
-            $SCREEN -X screen -t "$screen_window_name" $MUTT -f "$orig_maildir" -e "push \"$jump_cmd\""
-        else
-            $SCREEN -X -p "$screen_window_name" stuff "$jump_cmd_short"
-        fi
+    fi
+    if [ $? = 0 ] ; then
+        $SCREEN -X -p "$screen_window_name" stuff ":push \"$jump_cmd\""
+        exit 0
     fi
 fi
+
+# start mutt, open original folder and jump to the original message
+$SCREEN "${screen_opts[@]}" $MUTT -f "$orig_maildir" -e "push \"$jump_cmd\""
