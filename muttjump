@@ -29,11 +29,10 @@ MUTTJUMP_MODE=${MUTTJUMP_MODE:-search}
 MUTTJUMP_USE_SCREEN=${MUTTJUMP_USE_SCREEN:-auto}
 
 # "yes" or "no"
-# If this is set to "yes", muttjump will not open a new instance of
-# mutt, but instead jump to the original message in a running mutt
-# (which is running in a screen session).
-# ATTENTION: You need to have one mutt instance open for every mailbox
-#            for this to work!
+# Set this to "yes" if you want exactly one screen window (with mutt running
+# inside) per mailbox. With new versions of screen (> 4.00) it is possible
+# to do that automatically, with old versions you have to start them
+# manually! Setting this to yes implies MUTTJUMP_USE_SCREEN=yes.
 MUTTJUMP_MULTI_SCREEN_MODE=${MUTTJUMP_MULTI_SCREEN_MODE:-no}
 
 # function to create the screen window name from the full path of the mailbox
@@ -44,7 +43,7 @@ if ! type MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE >/dev/null 2>&1 ; then
 fi
 
 # Version of GNU screen
-# Since 4.01.00 (commit d87a0d8) backslash handling was altered.
+# Since 4.01.00devel (commit d87a0d8) backslash handling was altered.
 MUTTJUMP_SCREEN_VERSION=${MUTTJUMP_SCREEN_VERSION:-auto}
 
 # program paths
