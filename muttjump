@@ -43,7 +43,7 @@ if ! type MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE >/dev/null 2>&1 ; then
 fi
 
 # Version of GNU screen
-# Since 4.01.00devel (commit 98b6b41) backslash for -X handling was altered.
+# Since 4.01.00devel (commit 98b6b41) backslash handling for -X was altered.
 MUTTJUMP_SCREEN_VERSION=${MUTTJUMP_SCREEN_VERSION:-auto}
 
 # program paths
