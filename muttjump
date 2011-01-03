@@ -18,7 +18,7 @@
 #
 # macro generic ,j "<enter-command>push <pipe-message>muttjump<enter><enter>" "jump to original message"
 
-# one of: mairix, mu, mu-old (mu < 0.7) and nmzmail
+# one of: mairix, mairix-git, mu, mu-old (mu < 0.7) and nmzmail
 MUTTJUMP_INDEXER=${MUTTJUMP_INDEXER:-}
 
 # "limit" or "search" (default)
@@ -164,6 +164,10 @@ msgid_clean=$(echo "$msgid" | sed -e 's/^<//' -e 's/>$//')
 
 # try to locate path of message using a mail search engine
 case $MUTTJUMP_INDEXER in
+    mairix-git)
+        msgid_mairix=$msgid_clean
+        orig_msgfiles=$($MAIRIX -r "m:$msgid_clean")
+        ;;
     mairix)
         msgid_mairix=$msgid_clean
         # mairix can't quote special characters (~,/=^) in search words. As a
