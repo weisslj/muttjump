@@ -165,7 +165,6 @@ msgid_clean=$(echo "$msgid" | sed -e 's/^<//' -e 's/>$//')
 # try to locate path of message using a mail search engine
 case $MUTTJUMP_INDEXER in
     mairix-git)
-        msgid_mairix=$msgid_clean
         orig_msgfiles=$($MAIRIX -r "m:$msgid_clean")
         ;;
     mairix)
