@@ -1,8 +1,8 @@
 muttjump
 written by Johannes Weißl
 
-This script makes mail indexers (like mairix, mu or nmzmail) together with
-mutt more useful.
+This script makes mail indexers (like mairix, mu, nmzmail, or notmuch)
+together with mutt more useful.
 
 These search engines usually create a virtual maildir containing symbolic
 links to the original mails, which can be browsed using mutt.
