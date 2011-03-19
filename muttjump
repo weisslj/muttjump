@@ -3,8 +3,8 @@
 
 # muttjump
 #
-# This script makes mail indexers (like mairix, mu, nmzmail, or
-# notmuch) together with mutt more useful.
+# This script makes mail indexers (like mairix, mu, nmzmail or notmuch)
+# together with mutt more useful.
 #
 # These search engines usually create a virtual maildir containing symbolic
 # links to the original mails, which can be browsed using mutt.
@@ -18,7 +18,7 @@
 #
 # macro generic ,j "<enter-command>push <pipe-message>muttjump<enter><enter>" "jump to original message"
 
-# one of: mairix, mairix-git, mu, mu-old (mu < 0.7), nmzmail or notmuch (>0.5)
+# one of: mairix, mairix-git, mu, mu-old (mu < 0.7), nmzmail or notmuch (>= 0.5)
 MUTTJUMP_INDEXER=${MUTTJUMP_INDEXER:-}
 
 # "limit" or "search" (default)
@@ -193,8 +193,8 @@ case $MUTTJUMP_INDEXER in
         rm -rf "$nmzmail_results"
         ;;
     notmuch)
-	orig_msgfiles=$($NOTMUCH search --output=files "id:$msgid_clean")
-	;;
+        orig_msgfiles=$($NOTMUCH search --output=files "id:$msgid_clean")
+        ;;
     "")
         die "variable MUTTJUMP_INDEXER not set or empty"
         ;;
