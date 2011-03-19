@@ -1,3 +1,10 @@
+muttjump (1.5)
+
+  * support notmuch indexer (thanks to Benjamin Mako Hill <mako@atdot.cc>)
+  * support git version of mairix (use "mairix-git")
+
+ -- Johannes Weißl <jargon@molb.org>  Sat Mar 19 09:44:45 2011 +0100
+
 muttjump (1.4)
 
   * Bugfixes (e.g. better quoting) and compatibility with Max OS X (again)
