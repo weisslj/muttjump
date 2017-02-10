@@ -3,7 +3,7 @@
 
 # muttjump, muttjump-same
 #
-# This script makes mail indexers (like mairix, mu, nmzmail or notmuch)
+# This script makes mail indexers (like mairix, mu, nmzmail, or notmuch)
 # together with mutt more useful.
 #
 # These search engines usually create a virtual maildir containing symbolic
