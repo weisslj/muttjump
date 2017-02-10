@@ -28,5 +28,5 @@ after sourcing, lead to the jump to the desired message (and deletion of
 
 macro generic ,j "<enter-command>push <pipe-message>muttjump-same<enter><enter><enter-command>source ~/.muttjump<enter>" "jump to original message"
 
-Note: the latter usage of the script requires a symlink called
-muttjump-same with this script as a target to be created.
+Note: The latter usage of the script can be activated by creating a symlink
+called muttjump-same with this script as a target.
