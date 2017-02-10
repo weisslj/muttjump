@@ -1,7 +1,7 @@
 #!/bin/bash
 # written by Johannes Weißl
 
-# muttjump
+# muttjump, muttjump-same
 #
 # This script makes mail indexers (like mairix, mu, nmzmail or notmuch)
 # together with mutt more useful.
@@ -17,6 +17,17 @@
 # script helps to jump to this message, using e.g. this macro in .muttrc:
 #
 # macro generic ,j "<enter-command>push <pipe-message>muttjump<enter><enter>" "jump to original message"
+#
+# The way described above will open a new instance of mutt. Another option is 
+# to invoke this script as muttjump-same. In that case, a file ~/.muttjump 
+# will be created. This file will contain instructions for mutt, which will, 
+# after sourcing, lead to the jump to the desired message (and deletion of
+# ~/.muttjump). For that purpose, following macro might be used:
+#
+# macro generic ,j "<pipe-message>muttjump-same<enter>:source ~/.muttjump<enter>" "jump to original message"
+#
+# Note: the latter usage of the script requires a symlink called
+# muttjump-same with this script as a target to be created.
 
 # one of: mairix, mairix-git, mu, mu-old (mu < 0.7), nmzmail or notmuch (>= 0.5)
 MUTTJUMP_INDEXER=${MUTTJUMP_INDEXER:-}
@@ -58,6 +69,8 @@ REFORMAIL=${REFORMAIL:-reformail}
 WHIPTAIL=${WHIPTAIL:-whiptail --noitem}
 DIALOG=${DIALOG:-dialog}
 
+COMMAND=$(echo $0 | sed s/"^.*\/"/""/)
+
 function die () {
     echo -e >&2 "$0: $1"
     exit 1
@@ -94,12 +107,18 @@ function is_new_screen () {
 function usage () {
     cat >&2 <<END
 Usage: muttjump msgid
+       muttjump-same msgid
        cat msg | muttjump [-R]
+       cat msg | muttjump-same [-R]
 
 This script calls mutt, jumping to the message given in stdin or to the message
 identified by "msgid".  With "-R", it jumps to the message being replied to.
 It uses a mail search engine (currently mairix, mu and nmzmail are supported),
 which has to be configured through MUTTJUMP_INDEXER variable.
+
+When invoked as muttjump, the result is displayed in a new instance of mutt,
+while the latter variant tries to make use of an existing instance (from which
+was muttjump-same typically invoked by a macro).
 END
     exit 1
 }
@@ -113,6 +132,9 @@ function reopen_tty () {
     exec < $term
 }
 
+
+# Check used command
+[ $COMMAND != "muttjump" -a $COMMAND != "muttjump-same" ] && usage
 
 # Check command-line arguments and STDIN
 search_header="Message-ID"
@@ -232,6 +254,9 @@ else
     orig_maildir=$(dirname "$(dirname "$orig_msgfile")")
 fi
 
+# Resolve symlinks
+orig_maildir=$(readlink -f $orig_maildir)
+
 if [ ! -d "$orig_maildir/cur" ] ; then
     die "directory $(quote "$orig_maildir") doesn't exist or is no Maildir"
 fi
@@ -248,33 +273,39 @@ if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = yes ] ||
     MUTTJUMP_USE_SCREEN=yes
 fi
 
-screen_opts=()
-screen_query_arg=""
-if [ "$MUTTJUMP_USE_SCREEN" = yes ] ; then
-    if [ -n "$STY" ] ; then
-        screen_opts=("-X" "screen")
-        if is_new_screen ; then
-            jump_cmd=${jump_cmd/\\/\\\\\\}
-            screen_query_arg="-Q"
-        fi
-    else
-        reopen_tty
-    fi
-    screen_window_name=$(MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE "$orig_maildir")
-    screen_opts=("${screen_opts[@]}" "-t" "$screen_window_name")
+if [ $COMMAND = muttjump-same ] ; then
+	jump_cmd="<change-folder>$orig_maildir<enter>$jump_cmd"
+	echo "push \"$jump_cmd<shell-escape>rm ~/.muttjump<enter>\"" > ~/.muttjump
 else
-    SCREEN=""
-    reopen_tty
-fi
+	screen_opts=()
+	screen_query_arg=""
+	if [ "$MUTTJUMP_USE_SCREEN" = yes ] ; then
+		if [ -n "$STY" ] ; then
+			screen_opts=("-X" "screen")
+			if is_new_screen ; then
+				jump_cmd=${jump_cmd/\\/\\\\\\}
+				screen_query_arg="-Q"
+			fi
+		else
+			reopen_tty
+		fi
+		screen_window_name=$(MUTTJUMP_SCREEN_WINDOW_NAME_MANGLE "$orig_maildir")
+		screen_opts=("${screen_opts[@]}" "-t" "$screen_window_name")
+	else
+		SCREEN=""
+		reopen_tty
+	fi
 
-if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = yes -a -n "$STY" ] ; then
-    $SCREEN -X -p "$screen_window_name" $screen_query_arg \
-            select "$screen_window_name" >/dev/null
-    if [ $? = 0 ] ; then
-        $SCREEN -X -p "$screen_window_name" stuff ":push \"$jump_cmd\""
-        exit 0
-    fi
-fi
+	if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = yes -a -n "$STY" ] ; then
+		$SCREEN -X -p "$screen_window_name" $screen_query_arg \
+				select "$screen_window_name" >/dev/null
+		if [ $? = 0 ] ; then
+			$SCREEN -X -p "$screen_window_name" stuff ":push \"$jump_cmd\"
+	"
+			exit 0
+		fi
+	fi
 
-# start mutt, open original folder and jump to the original message
-$SCREEN "${screen_opts[@]}" $MUTT -f "$orig_maildir" -e "push \"$jump_cmd\""
+	# start mutt, open original folder and jump to the original message
+	$SCREEN "${screen_opts[@]}" $MUTT -f "$orig_maildir" -e "push \"$jump_cmd\""
+fi

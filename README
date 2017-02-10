@@ -19,3 +19,14 @@ macro generic ,j "<enter-command>push <pipe-message>muttjump<enter><enter>" "jum
 Don't forget to quit the new mutt instance (started by muttjump) after
 the modifications. To make jumping faster (no keypress required), unset
 $wait_key in your ~/.muttrc.
+
+The way described above will open a new instance of mutt. Another option is 
+to invoke this script as muttjump-same. In that case, a file ~/.muttjump 
+will be created. This file will contain instructions for mutt, which will, 
+after sourcing, lead to the jump to the desired message (and deletion of
+~/.muttjump). For that purpose, following macro might be used:
+
+macro generic ,j "<pipe-message>muttjump-same<enter>:source ~/.muttjump<enter>" "jump to original message"
+
+Note: the latter usage of the script requires a symlink called
+muttjump-same with this script as a target to be created.
