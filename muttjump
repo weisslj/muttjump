@@ -18,6 +18,10 @@
 #
 # macro generic ,j "<enter-command>push <pipe-message>muttjump<enter><enter>" "jump to original message"
 #
+# Don't forget to quit the new mutt instance (started by muttjump) after
+# the modifications. To make jumping faster (no keypress required), unset
+# $wait_key in your ~/.muttrc.
+#
 # The way described above will open a new instance of mutt. Another option is 
 # to invoke this script as muttjump-same. In that case, a file ~/.muttjump 
 # will be created. This file will contain instructions for mutt, which will, 
