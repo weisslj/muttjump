@@ -1,3 +1,12 @@
+muttjump (1.6)
+
+  * New "muttjump-same" mode, to jump to a message without opening a new mutt
+    instance (thanks to Martin Matějka <mar.matejka@gmail.com>)
+  * Command-line options, e.g. "muttjump -i mairix"
+  * Indexer option "mairix-git" -> "mairix", "mairix" -> "mairix-old"
+
+ -- Johannes Weißl <jargon@molb.org>  Fri, 10 Feb 2017 17:00:58 +0100
+
 muttjump (1.5)
 
   * support notmuch indexer (thanks to Benjamin Mako Hill <mako@atdot.cc>)
