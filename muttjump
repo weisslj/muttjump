@@ -120,8 +120,8 @@ Usage: muttjump msgid
 
 This script calls mutt, jumping to the message given in stdin or to the message
 identified by "msgid".  With "-R", it jumps to the message being replied to.
-It uses a mail search engine (currently mairix, mu and nmzmail are supported),
-which has to be configured through MUTTJUMP_INDEXER variable.
+It uses a mail search engine (currently mairix, mu, nmzmail, and notmuch are
+supported), which has to be configured through MUTTJUMP_INDEXER variable.
 
 When invoked as muttjump, the result is displayed in a new instance of mutt,
 while the latter variant tries to make use of an existing instance (from which
