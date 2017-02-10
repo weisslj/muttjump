@@ -26,7 +26,7 @@ will be created. This file will contain instructions for mutt, which will,
 after sourcing, lead to the jump to the desired message (and deletion of
 ~/.muttjump). For that purpose, following macro might be used:
 
-macro generic ,j "<pipe-message>muttjump-same<enter>:source ~/.muttjump<enter>" "jump to original message"
+macro generic ,j "<enter-command>push <pipe-message>muttjump-same<enter><enter><enter-command>source ~/.muttjump<enter>" "jump to original message"
 
 Note: the latter usage of the script requires a symlink called
 muttjump-same with this script as a target to be created.
