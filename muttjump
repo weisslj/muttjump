@@ -115,19 +115,25 @@ function is_new_screen () {
 
 function usage () {
     cat >&2 <<END
-Usage: muttjump msgid
-       cat msg | muttjump [-R]
+Usage: muttjump [options] msgid
+       cat msg | muttjump [options]
 
 This script calls mutt, jumping to the message given in stdin or to the message
 identified by "msgid".  With "-R", it jumps to the message being replied to.
 It uses a mail search engine (currently mairix, mu, nmzmail, and notmuch are
-supported), which has to be configured through MUTTJUMP_INDEXER variable.
+supported), which can be configured through the MUTTJUMP_INDEXER variable.
 
-When invoked as muttjump, the result is displayed in a new instance of mutt,
-while the latter variant tries to make use of an existing instance (from which
-was muttjump-same typically invoked by a macro).
+Options:
+  -h, --help            show this help message and exit
+  -i, --indexer PROG    search engine, e.g. mairix, mu, nmzmail, or notmuch
+  -m, --mode MODE       limit or search
+  -S, --use-screen      open new mutt instance in screen
+  -s, --same            do not start new mutt instance
+  -H, --header HEADER   search header, defaults to "Message-ID"
+  -R                    same as -H In-Reply-To
+  -M, --multi           multi-window, when mutt already runs inside screen
 END
-    exit 1
+    exit ${1:-1}
 }
 
 function reopen_tty () {
@@ -142,15 +148,55 @@ function reopen_tty () {
 
 # Check command-line arguments and STDIN
 search_header="Message-ID"
+while [ $# -gt 0 ] ; do
+    case $1 in
+        -h|--help)
+            usage 0
+            ;;
+        -i|--indexer)
+            MUTTJUMP_INDEXER=$2
+            shift ; shift
+            ;;
+        -m|--mode)
+            MUTTJUMP_MODE=$2
+            shift ; shift
+            ;;
+        -S|--use-screen)
+            MUTTJUMP_USE_SCREEN=yes
+            shift
+            ;;
+        -s|--same)
+            MUTTJUMP_SAME=yes
+            shift
+            ;;
+        -H|--header)
+            search_header=$2
+            shift ; shift
+            ;;
+        -R)
+            search_header="In-Reply-To"
+            shift
+            ;;
+        -M|--multi)
+            MUTTJUMP_MULTI_SCREEN_MODE=yes
+            shift
+            ;;
+        --)
+            shift ; break
+            ;;
+        -*)
+            die "Unrecognized option: $1"
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
 if tty -s ; then
     [ $# -ne 1 ] && usage
 else
-    [ $# -gt 1 ] && usage
-    if [ $# -eq 1 ] ; then
-        [ "$1" != "-R" ] && usage
-        search_header="In-Reply-To"
-        shift
-    fi
+    [ $# -eq 0 ] || usage
 fi
 
 # check if mutt is installed
