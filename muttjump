@@ -253,14 +253,14 @@ case $MUTTJUMP_INDEXER in
         orig_msgfiles=$($MAIRIX -r "m:$msgid_mairix")
         ;;
     mu)
-        orig_msgfiles=$($MU find -f l "i:$msgid_clean" | grep -v "^\*\*")
+        orig_msgfiles=$($MU find $MU_OPTIONS -f l "i:$msgid_clean" | grep -v "^\*\*")
         ;;
     mu-old)
-        orig_msgfiles=$($MU find -f p "m:$msgid_clean")
+        orig_msgfiles=$($MU find $MU_OPTIONS -f p "m:$msgid_clean")
         ;;
     nmzmail)
         nmzmail_results=$(mktemp -d)
-        echo "+message-id:/^$msgid_quoted$/" | $NMZMAIL -r "$nmzmail_results"
+        echo "+message-id:/^$msgid_quoted$/" | $NMZMAIL -r "$nmzmail_results" >/dev/null
         orig_msgfiles=$(find "$nmzmail_results" -type l -exec readlink {} \;)
         rm -rf "$nmzmail_results"
         ;;
