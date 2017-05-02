@@ -38,8 +38,11 @@ maildir=INBOX
 mfolder=$mairix_folder
 database=$mairix_database
 END
-echo "$MAIRIX -v -v -v"
+set -x
+cat "$mairixrc"
+find "$base"
 $MAIRIX -v -v -v
+set +x
 
 # -- notmuch setup --
 
