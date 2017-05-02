@@ -90,7 +90,7 @@ cat_files () {
 test1_ok='-f '"$base"'/INBOX -e push "<limit>~i'\''<test1@example\\\.com>'\''<enter><limit>all<enter>"'
 
 $MAIRIX s:test1 2>&1 | egrep -v "^(Matched|Created) "
-test1_mairix=$(cat_files "$mairix_folder" | "$muttjump" -i mairix)
+test1_mairix=$(cat_files "$mairix_folder" | "$muttjump" -i mairix-old)
 assertEqual "mairix test1" "$test1_ok" "$test1_mairix"
 
 notmuch-mutt -o "$notmuch_folder" search subject:test1
