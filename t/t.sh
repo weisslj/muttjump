@@ -41,7 +41,8 @@ END
 set -x
 cat "$mairixrc"
 find "$base"
-$MAIRIX -v -v -v
+strace $MAIRIX -v -v -v
+ls -l "$mairix_database"
 set +x
 
 # -- notmuch setup --
