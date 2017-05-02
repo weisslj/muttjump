@@ -38,7 +38,8 @@ maildir=INBOX
 mfolder=$mairix_folder
 database=$mairix_database
 END
-$MAIRIX
+echo "$MAIRIX -v -v -v"
+$MAIRIX -v -v -v
 
 # -- notmuch setup --
 
@@ -90,7 +91,7 @@ cat_files () {
 test1_ok='-f '"$base"'/INBOX -e push "<limit>~i'\''<test1@example\\\.com>'\''<enter><limit>all<enter>"'
 
 $MAIRIX s:test1 2>&1 | egrep -v "^(Matched|Created) "
-test1_mairix=$(cat_files "$mairix_folder" | "$muttjump" -i mairix-old)
+test1_mairix=$(cat_files "$mairix_folder" | "$muttjump" -i mairix)
 assertEqual "mairix test1" "$test1_ok" "$test1_mairix"
 
 notmuch-mutt -o "$notmuch_folder" search subject:test1
