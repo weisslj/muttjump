@@ -51,7 +51,7 @@ path=$base
 EOF
 notmuch_database=$base/.notmuch
 rm -rf "$notmuch_database"
-$NOTMUCH new --quiet
+$NOTMUCH new >/dev/null
 
 # -- mu setup --
 
