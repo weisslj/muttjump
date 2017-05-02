@@ -25,6 +25,7 @@ muttjump=$here/../muttjump
 export MUTT=echo
 rm -rf "$tmp"
 mkdir -p "$virtual" "$config" "$database"
+mkdir -p "$base"/INBOX/{new,tmp}
 
 # -- mairix setup --
 
