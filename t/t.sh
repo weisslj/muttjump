@@ -91,17 +91,17 @@ cat_files () {
 test1_ok='-f '"$base"'/INBOX -e push "<limit>~i'\''<test1@example\\\.com>'\''<enter><limit>all<enter>"'
 
 $MAIRIX s:test1 2>&1 | egrep -v "^(Matched|Created) "
-test1_mairix=$(cat_files "$mairix_folder" | "$muttjump" -i mairix-old)
-assertEqual "mairix test1" "$test1_ok" "$test1_mairix"
+assertEqual "mairix test1" "$test1_ok" \
+    "$(cat_files "$mairix_folder" | "$muttjump" -i mairix-old)"
 
 notmuch-mutt -o "$notmuch_folder" search subject:test1
-test1_notmuch=$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)
-assertEqual "notmuch test1" "$test1_ok" "$test1_notmuch"
+assertEqual "notmuch test1" "$test1_ok" \
+    "$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)"
 
 $MU find $MU_OPTIONS --format=links --linksdir="$mu_folder" subject:test1
-test1_mu=$(cat_files "$mu_folder" | "$muttjump" -i mu)
-assertEqual "mu test1" "$test1_ok" "$test1_mu"
+assertEqual "mu test1" "$test1_ok" \
+    "$(cat_files "$mu_folder" | "$muttjump" -i mu)"
 
 echo "+subject:/test1/" | $NMZMAIL -r "$nmzmail_folder" >/dev/null 2>&1
-test1_nmzmail=$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)
-assertEqual "nmzmail test1" "$test1_ok" "$test1_nmzmail"
+assertEqual "nmzmail test1" "$test1_ok" \
+    "$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)"
