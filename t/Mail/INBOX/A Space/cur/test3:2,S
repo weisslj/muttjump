@@ -1,0 +1,10 @@
+From: bob@example.com
+To: alice@example.com
+Subject: test3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Date: Mon, 1 May 2017 03:00:00 +0000
+Message-ID: <test3@example.com>
+
+test3

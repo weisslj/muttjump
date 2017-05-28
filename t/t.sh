@@ -26,6 +26,7 @@ export MUTT=echo
 rm -rf "$tmp"
 mkdir -p "$virtual" "$config" "$database"
 mkdir -p "$base"/INBOX/{new,tmp}
+mkdir -p "$base"/INBOX/"A Space"/{new,tmp}
 
 # -- mairix setup --
 
@@ -35,7 +36,7 @@ mairix_database=$database/mairix
 export MAIRIX="mairix -f $mairixrc"
 cat >"$mairixrc" <<END
 base=$base
-maildir=INBOX
+maildir=INBOX...
 mfolder=$mairix_folder
 database=$mairix_database
 END
@@ -104,4 +105,23 @@ assertEqual "mu test1" "$test1_ok" \
 
 echo "+subject:/test1/" | $NMZMAIL -r "$nmzmail_folder" >/dev/null 2>&1
 assertEqual "nmzmail test1" "$test1_ok" \
+    "$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)"
+
+
+test_space_ok='-f '"$base"'/INBOX/A Space -e push "<limit>~i'\''<test4@example\\\.com>'\''<enter><limit>all<enter>"'
+
+$MAIRIX s:test4 2>&1 | egrep -v "^(Matched|Created) "
+assertEqual "mairix space test" "$test_space_ok" \
+    "$(cat_files "$mairix_folder" | "$muttjump" -i mairix-old)"
+
+notmuch-mutt -o "$notmuch_folder" search subject:test4
+assertEqual "notmuch space test" "$test_space_ok" \
+    "$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)"
+
+$MU find $MU_OPTIONS --format=links --linksdir="$mu_folder" subject:test4
+assertEqual "mu space test" "$test_space_ok" \
+    "$(cat_files "$mu_folder" | "$muttjump" -i mu)"
+
+echo "+subject:/test4/" | $NMZMAIL -r "$nmzmail_folder" >/dev/null 2>&1
+assertEqual "nmzmail space test" "$test_space_ok" \
     "$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)"
