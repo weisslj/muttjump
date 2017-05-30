@@ -84,7 +84,7 @@ assertEqual () {
     fi
 }
 cat_files () {
-    find "$1" ! -type d -exec cat {} \;
+    find "$1" ! -type d -print0 | sort -z | xargs -r0 cat
 }
 
 # -- tests --
@@ -118,9 +118,9 @@ notmuch-mutt -o "$notmuch_folder" search subject:test4
 assertEqual "notmuch space test" "$test_space_ok" \
     "$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)"
 
-# $MU find $MU_OPTIONS --format=links --linksdir="$mu_folder" subject:test4
-# assertEqual "mu space test" "$test_space_ok" \
-#     "$(cat_files "$mu_folder" | "$muttjump" -i mu)"
+$MU find $MU_OPTIONS --format=links --linksdir="$mu_folder" --clearlinks subject:test4
+assertEqual "mu space test" "$test_space_ok" \
+    "$(cat_files "$mu_folder" | "$muttjump" -i mu)"
 
 echo "+subject:/test4/" | $NMZMAIL -r "$nmzmail_folder" >/dev/null 2>&1
 assertEqual "nmzmail space test" "$test_space_ok" \
