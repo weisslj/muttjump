@@ -125,3 +125,22 @@ assertEqual "mu space test" "$test_space_ok" \
 echo "+subject:/test4/" | $NMZMAIL -r "$nmzmail_folder" >/dev/null 2>&1
 assertEqual "nmzmail space test" "$test_space_ok" \
     "$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)"
+
+
+test_msgid_header_ok='-f '"$base"'/INBOX/Msgid -e push "<limit>~i'\''<test7!#\\\$%&.\\\*\\\+-/=\\\?\\\^_\`\\\{\\\|\\\}~@example\\\.com>'\''<enter><limit>all<enter>"'
+
+$MAIRIX s:test7 2>&1 | egrep -v "^(Matched|Created) "
+assertEqual "mairix msgid header test" "$test_msgid_header_ok" \
+    "$(cat_files "$mairix_folder" | "$muttjump" -i mairix-old)"
+
+notmuch-mutt -o "$notmuch_folder" search subject:test7
+assertEqual "notmuch msgid header test" "$test_msgid_header_ok" \
+    "$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)"
+
+$MU find $MU_OPTIONS --format=links --linksdir="$mu_folder" --clearlinks subject:test7
+assertEqual "mu msgid header test" "$test_msgid_header_ok" \
+    "$(cat_files "$mu_folder" | "$muttjump" -i mu)"
+
+echo "+subject:/test7/" | $NMZMAIL -r "$nmzmail_folder" >/dev/null 2>&1
+assertEqual "nmzmail msgid header test" "$test_msgid_header_ok" \
+    "$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)"

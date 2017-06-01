@@ -73,8 +73,6 @@ MU=${MU:-mu}
 NMZMAIL=${NMZMAIL:-nmzmail}
 NOTMUCH=${NOTMUCH:-notmuch}
 SCREEN=${SCREEN:-screen}
-FORMAIL=${FORMAIL:-formail}
-REFORMAIL=${REFORMAIL:-reformail}
 WHIPTAIL=${WHIPTAIL:-whiptail --noitem}
 DIALOG=${DIALOG:-dialog}
 
@@ -91,6 +89,10 @@ function quote () {
 
 function quote_regexp () {
     echo "$1" | sed 's/[][\^.$|)(*+?}{]/\\&/g'
+}
+
+function quote_mutt () {
+    echo "$1" | sed -e 's/`/\\&/g' -e "s/'/./g"
 }
 
 function is_callable () {
@@ -222,12 +224,12 @@ esac
 # search for Message-ID in STDIN
 if [ $# -eq 1 ] ; then
     msgid=$1
-elif is_callable $FORMAIL ; then
-    msgid=$($FORMAIL -c -z -x $search_header | head -n1)
-elif is_callable $REFORMAIL ; then
-    msgid=$($REFORMAIL -c -x $search_header: | head -n1)
 else
-    msgid=$(sed -n 's/^'$search_header':[ \t]*\(.*\)/\1/Ip' | head -n1)
+    msgid=$(sed -E -e '/^\r?$/q' | \
+            sed -E -e ':a' -e 'N' -e '$!ba' -e 's/\r?\n([ \t]+)/\1/g' | \
+            sed -n 's/^'$search_header':[ \t]*\(.*\)/\1/Ip' | \
+            sed -E 's/[ \t]+$//' | \
+            head -n1)
 fi
 if [ -z "$msgid" ] ; then
     die "could not find $search_header header in standard input"
@@ -311,7 +313,7 @@ if [ ! -d "$orig_maildir/cur" ] ; then
     die "directory $(quote "$orig_maildir") doesn't exist or is no Maildir"
 fi
 
-msgid_mutt=$(quote_regexp "$msgid_quoted")
+msgid_mutt=$(quote_mutt "$(quote_regexp "$msgid_quoted")")
 jump_expr="~i'$msgid_mutt'"
 jump_cmd="<limit>$jump_expr<enter>"
 if [ "$MUTTJUMP_MODE" = search ] ; then
