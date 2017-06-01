@@ -27,6 +27,7 @@ rm -rf "$tmp"
 mkdir -p "$virtual" "$config" "$database"
 mkdir -p "$base"/INBOX/{new,tmp}
 mkdir -p "$base"/INBOX/"A Space"/{new,tmp}
+mkdir -p "$base"/INBOX/Msgid/{new,tmp}
 
 # -- mairix setup --
 
