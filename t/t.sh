@@ -42,6 +42,10 @@ mfolder=$mairix_folder
 database=$mairix_database
 END
 $MAIRIX
+mairix_version=mairix
+if $MAIRIX --version | grep -E -q '^mairix.* 0\.([0-9]|1[0-9]|2[012])([^0-9]|$)' ; then
+    mairix_version=mairix-old
+fi
 
 # -- notmuch setup --
 
@@ -104,8 +108,8 @@ cat_files () {
 test1_ok='-f '"$base"'/INBOX -e push "<limit>~i'\''<test1@example\\\.com>'\''<enter><limit>all<enter>"'
 
 $MAIRIX s:test1 2>&1 | egrep -v "^(Matched|Created) "
-assertEqual "mairix test1" "$test1_ok" \
-    "$(cat_files "$mairix_folder" | "$muttjump" -i mairix-old)"
+assertEqual "$mairix_version test1" "$test1_ok" \
+    "$(cat_files "$mairix_folder" | "$muttjump" -i $mairix_version)"
 
 notmuch-mutt -o "$notmuch_folder" search subject:test1
 assertEqual "notmuch test1" "$test1_ok" \
@@ -123,8 +127,8 @@ assertEqual "nmzmail test1" "$test1_ok" \
 test_space_ok='-f '"$base"'/INBOX/A Space -e push "<limit>~i'\''<test4@example\\\.com>'\''<enter><limit>all<enter>"'
 
 $MAIRIX s:test4 2>&1 | egrep -v "^(Matched|Created) "
-assertEqual "mairix space test" "$test_space_ok" \
-    "$(cat_files "$mairix_folder" | "$muttjump" -i mairix-old)"
+assertEqual "$mairix_version space test" "$test_space_ok" \
+    "$(cat_files "$mairix_folder" | "$muttjump" -i $mairix_version)"
 
 notmuch-mutt -o "$notmuch_folder" search subject:test4
 assertEqual "notmuch space test" "$test_space_ok" \
@@ -142,8 +146,8 @@ assertEqual "nmzmail space test" "$test_space_ok" \
 test_msgid_header_ok='-f '"$base"'/INBOX/Msgid -e push "<limit>~i'\''<test7!#\\\$%&.\\\*\\\+-/=\\\?\\\^_\`\\\{\\\|\\\}~@example\\\.com>'\''<enter><limit>all<enter>"'
 
 $MAIRIX s:test7 2>&1 | egrep -v "^(Matched|Created) "
-assertEqual "mairix msgid header test" "$test_msgid_header_ok" \
-    "$(cat_files "$mairix_folder" | "$muttjump" -i mairix-old)"
+assertEqual "$mairix_version msgid header test" "$test_msgid_header_ok" \
+    "$(cat_files "$mairix_folder" | "$muttjump" -i $mairix_version)"
 
 notmuch-mutt -o "$notmuch_folder" search subject:test7
 assertEqual "notmuch msgid header test" "$test_msgid_header_ok" \
