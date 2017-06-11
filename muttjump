@@ -33,7 +33,7 @@
 # Note: The latter usage of the script can be activated by creating a symlink
 # called muttjump-same with this script as a target.
 
-# one of: mairix, mairix-old (mairix < 0.23), mu, mu-0.9.9.5, mu-0.6,
+# one of: mairix, mairix-0.22, mu, mu-0.9.9.5, mu-0.6,
 #          nmzmail, or notmuch (>= 0.5)
 MUTTJUMP_INDEXER=${MUTTJUMP_INDEXER:-}
 
@@ -242,7 +242,7 @@ case $MUTTJUMP_INDEXER in
     mairix|mairix-git)
         orig_msgfiles=$($MAIRIX -r "m:$msgid_clean")
         ;;
-    mairix-old)
+    mairix-0.22|mairix-old)
         msgid_mairix=$msgid_clean
         # mairix 0.22 or older can't quote special characters (~,/=^) in search
         # words. As a workaround, split Message-ID in 31-character long

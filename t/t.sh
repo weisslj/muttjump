@@ -44,7 +44,7 @@ END
 $MAIRIX
 mairix_version=mairix
 if $MAIRIX --version | grep -E -q '^mairix.* 0\.([0-9]|1[0-9]|2[012])([^0-9]|$)' ; then
-    mairix_version=mairix-old
+    mairix_version=mairix-0.22
 fi
 
 # -- notmuch setup --
