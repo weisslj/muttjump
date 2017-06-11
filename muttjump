@@ -227,9 +227,9 @@ if [ $# -eq 1 ] ; then
 else
     msgid=$(sed -E -e '/^\r?$/q' | \
             sed -E -e ':a' -e 'N' -e '$!ba' -e 's/\r?\n([ \t]+)/\1/g' | \
-            sed -n 's/^'$search_header':[ \t]*\(.*\)/\1/Ip' | \
-            sed -E 's/[ \t]+$//' | \
-            head -n1)
+            grep -i -m 1 "^$search_header:" | \
+            sed -E 's/^[^:]+:[ \t]*//' | \
+            sed -E 's/[ \t]+$//')
 fi
 if [ -z "$msgid" ] ; then
     die "could not find $search_header header in standard input"
