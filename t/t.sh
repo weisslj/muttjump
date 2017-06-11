@@ -62,6 +62,17 @@ export MU=mu
 export MU_OPTIONS="-q --muhome=$database/mu"
 mu_folder=$virtual/mu
 $MU index $MU_OPTIONS -m "$base"
+# mu < 0.9.2 does not support "--format-links", later versions require it:
+mu_find_options="--format=links"
+if mu --version | grep -E -q '^mu.* 0\.([012345678]|9\.[01])' ; then
+    mu_find_options=""
+fi
+mu_version=mu
+if mu --version | grep -E -q '^mu.* 0\.9\.([678]|9\.[012345])' ; then
+    mu_version=mu-0.9.9.5
+elif mu --version | grep -E -q '^mu.* 0\.[0123456]' ; then
+    mu_version=mu-0.6
+fi
 
 # -- nmzmail setup --
 
@@ -100,9 +111,9 @@ notmuch-mutt -o "$notmuch_folder" search subject:test1
 assertEqual "notmuch test1" "$test1_ok" \
     "$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)"
 
-$MU find $MU_OPTIONS --format=links --linksdir="$mu_folder" subject:test1
-assertEqual "mu test1" "$test1_ok" \
-    "$(cat_files "$mu_folder" | "$muttjump" -i mu)"
+$MU find $MU_OPTIONS $mu_find_options --linksdir="$mu_folder" subject:test1
+assertEqual "$mu_version test1" "$test1_ok" \
+    "$(cat_files "$mu_folder" | "$muttjump" -i $mu_version)"
 
 echo "+subject:/test1/" | $NMZMAIL -r "$nmzmail_folder" >/dev/null 2>&1
 assertEqual "nmzmail test1" "$test1_ok" \
@@ -119,9 +130,9 @@ notmuch-mutt -o "$notmuch_folder" search subject:test4
 assertEqual "notmuch space test" "$test_space_ok" \
     "$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)"
 
-$MU find $MU_OPTIONS --format=links --linksdir="$mu_folder" --clearlinks subject:test4
-assertEqual "mu space test" "$test_space_ok" \
-    "$(cat_files "$mu_folder" | "$muttjump" -i mu)"
+$MU find $MU_OPTIONS $mu_find_options --linksdir="$mu_folder" --clearlinks subject:test4
+assertEqual "$mu_version space test" "$test_space_ok" \
+    "$(cat_files "$mu_folder" | "$muttjump" -i $mu_version)"
 
 echo "+subject:/test4/" | $NMZMAIL -r "$nmzmail_folder" >/dev/null 2>&1
 assertEqual "nmzmail space test" "$test_space_ok" \
@@ -138,9 +149,9 @@ notmuch-mutt -o "$notmuch_folder" search subject:test7
 assertEqual "notmuch msgid header test" "$test_msgid_header_ok" \
     "$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)"
 
-$MU find $MU_OPTIONS --format=links --linksdir="$mu_folder" --clearlinks subject:test7
-assertEqual "mu msgid header test" "$test_msgid_header_ok" \
-    "$(cat_files "$mu_folder" | "$muttjump" -i mu)"
+$MU find $MU_OPTIONS $mu_find_options --linksdir="$mu_folder" --clearlinks subject:test7
+assertEqual "$mu_version msgid header test" "$test_msgid_header_ok" \
+    "$(cat_files "$mu_folder" | "$muttjump" -i $mu_version)"
 
 echo "+subject:/test7/" | $NMZMAIL -r "$nmzmail_folder" >/dev/null 2>&1
 assertEqual "nmzmail msgid header test" "$test_msgid_header_ok" \

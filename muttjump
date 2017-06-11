@@ -33,8 +33,8 @@
 # Note: The latter usage of the script can be activated by creating a symlink
 # called muttjump-same with this script as a target.
 
-# one of: mairix, mairix-old (mairix < 0.23), mu, mu-old (mu < 0.7), nmzmail or
-#         notmuch (>= 0.5)
+# one of: mairix, mairix-old (mairix < 0.23), mu, mu-0.9.9.5, mu-0.6,
+#          nmzmail, or notmuch (>= 0.5)
 MUTTJUMP_INDEXER=${MUTTJUMP_INDEXER:-}
 
 # "limit" or "search" (default)
@@ -257,7 +257,14 @@ case $MUTTJUMP_INDEXER in
     mu)
         orig_msgfiles=$($MU find $MU_OPTIONS -f l "i:$msgid_clean" | grep -v "^\*\*")
         ;;
-    mu-old)
+    mu-0.9.9.5)
+        # 0.9.8.3 - 0.9.9.5: [*'] in "msgid:" search expression not supported
+        # 0.9.6 - 0.9.8.2: [*'!] in "msgid:" search expression not supported
+        # < 0.9.6: [*'!] in Message-ID itself not supported
+        msgid_mu=$(echo "$msgid_clean" | sed 's/[*'\''!].*/*/')
+        orig_msgfiles=$($MU find $MU_OPTIONS -f l "i:$msgid_mu" | grep -v "^\*\*")
+        ;;
+    mu-0.6|mu-old)
         orig_msgfiles=$($MU find $MU_OPTIONS -f p "m:$msgid_clean")
         ;;
     nmzmail)
