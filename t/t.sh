@@ -64,13 +64,13 @@ mu_folder=$virtual/mu
 $MU index $MU_OPTIONS -m "$base"
 # mu < 0.9.2 does not support "--format-links", later versions require it:
 mu_find_options="--format=links"
-if mu --version | grep -E -q '^mu.* 0\.([012345678]|9\.[01])' ; then
+if mu --version | grep -E -q '^mu.* 0\.([012345678]|9\.[01])([^0-9]|$)' ; then
     mu_find_options=""
 fi
 mu_version=mu
-if mu --version | grep -E -q '^mu.* 0\.9\.([678]|9\.[012345])' ; then
+if mu --version | grep -E -q '^mu.* 0\.9\.([678]|9\.[012345])([^0-9]|$)' ; then
     mu_version=mu-0.9.9.5
-elif mu --version | grep -E -q '^mu.* 0\.[0123456]' ; then
+elif mu --version | grep -E -q '^mu.* 0\.[0123456]([^0-9]|$)' ; then
     mu_version=mu-0.6
 fi
 
