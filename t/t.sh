@@ -100,7 +100,7 @@ assertEqual () {
     fi
 }
 cat_files () {
-    find "$1" ! -type d -print0 | sort -z | xargs -r0 cat
+    find "$1" ! -type d -print0 | sort -z | xargs -0 cat
 }
 
 # -- tests --
