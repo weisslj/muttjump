@@ -314,7 +314,7 @@ else
 fi
 
 # Resolve symlinks
-orig_maildir=$(readlink -f "$orig_maildir")
+orig_maildir=$(cd "$orig_maildir" && pwd -P)
 
 if [ ! -d "$orig_maildir/cur" ] ; then
     die "directory $(quote "$orig_maildir") doesn't exist or is no Maildir"
