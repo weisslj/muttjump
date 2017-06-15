@@ -11,6 +11,4 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mairix notmuch mu; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cpan Mail::Box::Maildir && source $HOME/.bashrc && curl -O https://raw.githubusercontent.com/notmuch/notmuch/master/contrib/notmuch-mutt/notmuch-mutt && install notmuch-mutt /usr/local/bin/; fi
 script:
-  - cat $HOME/.bashrc
-  - set
   - ./t/t.sh
