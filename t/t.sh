@@ -60,6 +60,11 @@ notmuch_database=$base/.notmuch
 rm -rf "$notmuch_database"
 $NOTMUCH new >/dev/null
 
+notmuch_mutt () {
+    # notmuch-mutt uses GNU extensions of xargs
+    XARGS=$(type -p xargs) PATH=$here/utils:$PATH notmuch-mutt "$@"
+}
+
 # -- mu setup --
 
 export MU=mu
@@ -111,7 +116,7 @@ $MAIRIX s:test1 2>&1 | egrep -v "^(Matched|Created) "
 assertEqual "$mairix_version test1" "$test1_ok" \
     "$(cat_files "$mairix_folder" | "$muttjump" -i $mairix_version)"
 
-notmuch-mutt -o "$notmuch_folder" search subject:test1
+notmuch_mutt -o "$notmuch_folder" search subject:test1
 assertEqual "notmuch test1" "$test1_ok" \
     "$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)"
 
@@ -130,7 +135,7 @@ $MAIRIX s:test4 2>&1 | egrep -v "^(Matched|Created) "
 assertEqual "$mairix_version space test" "$test_space_ok" \
     "$(cat_files "$mairix_folder" | "$muttjump" -i $mairix_version)"
 
-notmuch-mutt -o "$notmuch_folder" search subject:test4
+notmuch_mutt -o "$notmuch_folder" search subject:test4
 assertEqual "notmuch space test" "$test_space_ok" \
     "$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)"
 
@@ -149,7 +154,7 @@ $MAIRIX s:test7 2>&1 | egrep -v "^(Matched|Created) "
 assertEqual "$mairix_version msgid header test" "$test_msgid_header_ok" \
     "$(cat_files "$mairix_folder" | "$muttjump" -i $mairix_version)"
 
-notmuch-mutt -o "$notmuch_folder" search subject:test7
+notmuch_mutt -o "$notmuch_folder" search subject:test7
 assertEqual "notmuch msgid header test" "$test_msgid_header_ok" \
     "$(cat_files "$notmuch_folder" | "$muttjump" -i notmuch)"
 

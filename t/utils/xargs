@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [ -z "$XARGS" ] ; then
+    echo >&2 "$0: Variable \$XARGS not set, should contain path to xargs program."
+    exit 1
+fi
+
+declare -a args
+no_run_if_empty=
+while [ $# -gt 0 ] ; do
+    case $1 in
+        -r|--no-run-if-empty)
+            no_run_if_empty=yes
+            shift
+            ;;
+        --)
+            args+=($1)
+            shift ; break
+            ;;
+        -I|-J|-L|-n|-P|-R|-s)
+            args+=($1 $2)
+            shift ; shift
+            ;;
+        -*)
+            args+=($1)
+            shift
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if [ "$no_run_if_empty" = yes ] && [ $# -eq 0 ] ; then
+    exit 0
+else
+    $XARGS "${args[@]}" "$@"
+    exit $?
+fi
