@@ -31,9 +31,7 @@ while [ $# -gt 0 ] ; do
     esac
 done
 
-if [ "$no_run_if_empty" = yes ] && [ $# -eq 0 ] ; then
-    exit 0
-else
-    $XARGS "${args[@]}" "$@"
-    exit $?
-fi
+# TODO: Implement $no_run_if_empty mode
+
+$XARGS "${args[@]}" "$@"
+exit $?
