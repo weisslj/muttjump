@@ -163,5 +163,6 @@ assertEqual "$mu_version msgid header test" "$test_msgid_header_ok" \
     "$(cat_files "$mu_folder" | "$muttjump" -i $mu_version)"
 
 echo "+subject:/test7/" | $NMZMAIL -r "$nmzmail_folder" # >/dev/null 2>&1
+find "$nmzmail_folder" -exec ls -l {} \;
 assertEqual "nmzmail msgid header test" "$test_msgid_header_ok" \
     "$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)"

@@ -268,10 +268,12 @@ case $MUTTJUMP_INDEXER in
         orig_msgfiles=$($MU find $MU_OPTIONS -f p "m:$msgid_clean")
         ;;
     nmzmail)
+        set -x
         nmzmail_results=$(mktemp -d)
-        echo "+message-id:/^$msgid_quoted$/" | $NMZMAIL -r "$nmzmail_results" >/dev/null
+        echo "+message-id:/^$msgid_quoted$/" | $NMZMAIL -r "$nmzmail_results" >&2
         orig_msgfiles=$(find "$nmzmail_results" -type l -exec readlink {} \;)
         rm -rf "$nmzmail_results"
+        set +x
         ;;
     notmuch)
         orig_msgfiles=$($NOTMUCH search --output=files "id:$msgid_clean")
