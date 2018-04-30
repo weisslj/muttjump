@@ -124,9 +124,9 @@ $MU find $MU_OPTIONS $mu_find_options --linksdir="$mu_folder" subject:test1
 assertEqual "$mu_version test1" "$test1_ok" \
     "$(cat_files "$mu_folder" | "$muttjump" -i $mu_version)"
 
-# echo "+subject:/test1/" | $NMZMAIL -r "$nmzmail_folder" # >/dev/null 2>&1
-# assertEqual "nmzmail test1" "$test1_ok" \
-#     "$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)"
+echo "+subject:/test1/" | $NMZMAIL -r "$nmzmail_folder" # >/dev/null 2>&1
+assertEqual "nmzmail test1" "$test1_ok" \
+    "$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)"
 
 
 test_space_ok='-f '"$base"'/INBOX/A Space -e push "<limit>~i'\''<test4@example\\\.com>'\''<enter><limit>all<enter>"'
@@ -143,9 +143,9 @@ $MU find $MU_OPTIONS $mu_find_options --linksdir="$mu_folder" --clearlinks subje
 assertEqual "$mu_version space test" "$test_space_ok" \
     "$(cat_files "$mu_folder" | "$muttjump" -i $mu_version)"
 
-# echo "+subject:/test4/" | $NMZMAIL -r "$nmzmail_folder" # >/dev/null 2>&1
-# assertEqual "nmzmail space test" "$test_space_ok" \
-#     "$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)"
+echo "+subject:/test4/" | $NMZMAIL -r "$nmzmail_folder" # >/dev/null 2>&1
+assertEqual "nmzmail space test" "$test_space_ok" \
+    "$(cat_files "$nmzmail_folder" | "$muttjump" -i nmzmail)"
 
 
 test_msgid_header_ok='-f '"$base"'/INBOX/Msgid -e push "<limit>~i'\''<test7!#\\\$%&.\\\*\\\+-/=\\\?\\\^_\`\\\{\\\|\\\}~@example\\\.com>'\''<enter><limit>all<enter>"'
