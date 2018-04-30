@@ -1,7 +1,5 @@
 #!/bin/bash
 
-sudo apt-get install -y tree
-
 log_begin_msg () {
     echo -n "$@"
 }
