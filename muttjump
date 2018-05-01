@@ -270,6 +270,8 @@ case $MUTTJUMP_INDEXER in
     nmzmail)
         set -x
         nmzmail_results=$(mktemp -d)
+        echo "+message-id:/^$msgid_quoted$/" | md5sum >&2
+        namazu --debug -n 2000 -l -s "+message-id:/^$msgid_quoted$/" ./t/tmp/database/nmzmail/index >&2
         echo "+message-id:/^$msgid_quoted$/" | $NMZMAIL -r "$nmzmail_results" >&2
         orig_msgfiles=$(find "$nmzmail_results" -type l -exec readlink {} \;)
         rm -rf "$nmzmail_results"
