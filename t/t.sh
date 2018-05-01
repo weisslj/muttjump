@@ -88,7 +88,7 @@ fi
 nmzmail_folder=$virtual/nmzmail
 nmzmail_database=$database/nmzmail
 mkdir -p "$nmzmail_database"
-export NMZMAIL="valgrind nmzmail -b $nmzmail_database"
+export NMZMAIL="nmzmail -b $nmzmail_database"
 $NMZMAIL -i "$base/INBOX" # >/dev/null 2>&1
 
 # -- utilities --
