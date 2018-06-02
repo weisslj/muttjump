@@ -1,3 +1,13 @@
+muttjump (1.7)
+
+  * Fix handling of spaces in Maildir directories (regression from 1.5)
+  * Drop optional dependency to formail (procmail) and reformail (maildrop)
+  * Support older versions of mu
+  * Add test suite, ensure compatibility with macOS
+  * Remove obsolete fallback
+
+ -- Johannes Weißl <jargon@molb.org>  Sat, 02 Jun 2018 11:29:26 +0200
+
 muttjump (1.6)
 
   * New "muttjump-same" mode, to jump to a message without opening a new mutt
