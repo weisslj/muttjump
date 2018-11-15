@@ -134,7 +134,7 @@ supported), which can be configured through the MUTTJUMP_INDEXER variable.
 Options:
   -h, --help            show this help message and exit
   -i, --indexer PROG    search engine, e.g. mairix, mu, nmzmail, or notmuch
-  -m, --mode MODE       limit or search
+  -m, --mode MODE       limit, search or thread
   -S, --use-screen      open new mutt instance in screen
   -s, --same            do not start new mutt instance
   -H, --header HEADER   search header, defaults to "Message-ID"
@@ -220,10 +220,10 @@ elif is_callable $DIALOG ; then
 fi
 
 case $MUTTJUMP_MODE in
-    limit|search)
+    limit|search|thread)
         ;;
     *)
-        die "variable MUTTJUMP_MODE must be set to \"limit\" or \"search\""
+        die "variable MUTTJUMP_MODE must be set to \"limit\", \"search\" or \"thread\""
         ;;
 esac
 
@@ -331,6 +331,8 @@ jump_expr="~i'$msgid_mutt'"
 jump_cmd="<limit>$jump_expr<enter>"
 if [ "$MUTTJUMP_MODE" = search ] ; then
     jump_cmd="$jump_cmd<limit>all<enter>"
+elif [ "$MUTTJUMP_MODE" = thread ] ; then
+    jump_cmd="$jump_cmd<limit-current-thread>"
 fi
 
 if [ "$MUTTJUMP_MULTI_SCREEN_MODE" = yes ] ||
