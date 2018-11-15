@@ -33,10 +33,10 @@
 # Note: The latter usage of the script can be activated by creating a symlink
 # called muttjump-same with this script as a target.
 
-MUTTJUMP_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/muttjump/muttjumprc"
+MUTTJUMP_CONFIG=${XDG_CONFIG_HOME:-$HOME/.config}/muttjump/muttjumprc
 
-if [ -f $MUTTJUMP_CONFIG ] ; then
-    . $MUTTJUMP_CONFIG
+if [ -f "$MUTTJUMP_CONFIG" ] ; then
+    . "$MUTTJUMP_CONFIG"
 fi
 
 # one of: mairix, mairix-0.22, mu, mu-0.9.9.5, mu-0.6,
