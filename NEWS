@@ -1,3 +1,10 @@
+muttjump (1.8)
+
+  * Support MUTTJUMP_MODE=thread to limit the view to the thread of a message
+  * Support configuration file, e.g. ~/.config/muttjump/muttjumprc
+
+ -- Johannes Weißl <jargon@molb.org>  Thu, 15 Nov 2018 21:49:42 +0100
+
 muttjump (1.7)
 
   * Fix handling of spaces in Maildir directories (regression from 1.5)
