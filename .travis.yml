@@ -1,15 +1,12 @@
 os:
   - linux
   - osx
-dist: trusty
-sudo: required
 language: bash
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y mairix notmuch notmuch-mutt maildir-utils nmzmail; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew unlink python; fi  # https://github.com/Homebrew/homebrew-core/issues/26358
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mairix notmuch mu https://raw.githubusercontent.com/weisslj/homebrew-core/master/Formula/namazu.rb; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mairix notmuch mu namazu; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then PERL_MM_USE_DEFAULT=1 cpan -T String::ShellQuote Mail::Box::Maildir && source $HOME/.bashrc && curl -O https://raw.githubusercontent.com/notmuch/notmuch/master/contrib/notmuch-mutt/notmuch-mutt && install notmuch-mutt /usr/local/bin/; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -O http://www.flpsed.org/nmzmail-1.1.tar.gz && tar -xf nmzmail-1.1.tar.gz && pushd nmzmail-1.1 && ./configure && make && make install && popd; fi
 script:
