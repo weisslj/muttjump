@@ -2,7 +2,7 @@ os:
   - linux
   - osx
 language: bash
-before_install:
+before_install: travis_wait
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y mairix notmuch notmuch-mutt maildir-utils nmzmail; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
