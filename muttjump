@@ -145,6 +145,7 @@ END
 }
 
 function reopen_tty () {
+    [ -t 0 ] || return
     # Close message-stdin and open terminal-stdin instead.
     # mutt behaves different if STDIN is no terminal
     # TODO: Find cleaner solution (e.g. mutt command-line argument?)
