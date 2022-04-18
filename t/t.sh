@@ -70,7 +70,8 @@ notmuch_mutt () {
 export MU=mu
 export MU_OPTIONS="-q --muhome=$database/mu"
 mu_folder=$virtual/mu
-$MU index $MU_OPTIONS -m "$base"
+$MU init $MU_OPTIONS -m "$base"
+$MU index $MU_OPTIONS
 # mu < 0.9.2 does not support "--format-links", later versions require it:
 mu_find_options="--format=links"
 if $MU --version | grep -E -q '^mu.* 0\.([012345678]|9\.[01])([^0-9]|$)' ; then
