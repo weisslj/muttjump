@@ -1,0 +1,40 @@
+name: Test
+on: push
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get install mairix notmuch notmuch-mutt maildir-utils nmzmail
+      - uses: actions/checkout@v3
+      - run: ./t/t.sh
+  macos:
+    runs-on: macos-latest
+    steps:
+      - run: brew install mairix notmuch mu
+      - name: Install notmuch-mutt
+        run: |
+          cpan -T String::ShellQuote Mail::Box::Maildir &&
+          curl -O https://raw.githubusercontent.com/notmuch/notmuch/master/contrib/notmuch-mutt/notmuch-mutt &&
+          install notmuch-mutt /usr/local/bin/
+      - name: Install namazu
+        run: |
+          cpan -T File::MMagic &&
+          brew install gsed &&
+          curl -O http://www.namazu.org/stable/namazu-2.0.21.tar.gz &&
+          tar -xf namazu-2.0.21.tar.gz &&
+          cd namazu-2.0.21 &&
+          curl https://github.com/weisslj/namazu/commit/c5cf027.patch | sed -e 1,30d -e 35,42d | patch -p1 &&
+          sed -i -e 's/sed/gsed/g' scripts/Makefile.in pltests/Makefile.in &&
+          ./configure &&
+          make &&
+          sudo make install
+      - name: Install nmzmail
+        run: |
+          curl -O -L http://www.flpsed.org/nmzmail-1.1.tar.gz &&
+          tar -xf nmzmail-1.1.tar.gz &&
+          cd nmzmail-1.1 &&
+          ./configure &&
+          make &&
+          make install
+      - uses: actions/checkout@v3
+      - run: ./t/t.sh
