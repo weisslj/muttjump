@@ -2,7 +2,7 @@ name: Test
 on:
   push:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 0 1 * *'  # monthly
 jobs:
   linux:
     runs-on: ubuntu-latest
